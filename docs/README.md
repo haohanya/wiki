@@ -44,11 +44,6 @@
 - [Consul](back/spring-cloud/SpringCloudConsul.md)
 - [Apollo](back/spring-cloud/Apollo.md)
 
-## 书籍
-
-- [OnJava8](main/OnJava8.md)
-
-
 # 前端
 
 - [ViteJs 创建 Vue 工程](web/ViteCreateVueProJect.md)
