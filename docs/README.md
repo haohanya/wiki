@@ -68,4 +68,4 @@
 
 # 书籍
 
-- [OnJava8](/book/on-java8/OnJava8.md)
+- [OnJava8](book/on-java8/OnJava8.md)
