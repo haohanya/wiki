@@ -262,21 +262,21 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
         // 定义 taskQueue 实现异步任务。解决 : 业务时间过长导致长时间阻塞
         ctx.channel().eventLoop().execute(new Runnable() {
-@Override
-public void run() {
-        try {
-        Thread.sleep(10 * 1000);
-        } catch (InterruptedException e) {
-        e.printStackTrace();
-        }
-        ctx.writeAndFlush(Unpooled.copiedBuffer("Hello Netty2~", CharsetUtil.UTF_8));
-        }
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(10 * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                ctx.writeAndFlush(Unpooled.copiedBuffer("Hello Netty2~", CharsetUtil.UTF_8));
+            }
         });
 
         ByteBuf buf = (ByteBuf) msg;
         logger.info("客户端发送的消息是 : {}", buf.toString(CharsetUtil.UTF_8));
         logger.info("客户端的地址是 : {}", ctx.channel().remoteAddress());
-        }
+    }
 ```
 
 ## scheduledTaskQueue 定时任务队列
@@ -287,21 +287,21 @@ public void run() {
 
         // 参数一：业务实现、参数二：延迟时间、参数三：时间单位
         ctx.channel().eventLoop().schedule(new Runnable() {
-@Override
-public void run() {
-        try {
-        Thread.sleep(10 * 1000);
-        } catch (InterruptedException e) {
-        e.printStackTrace();
-        }
-        ctx.writeAndFlush(Unpooled.copiedBuffer("Hello Netty2~", CharsetUtil.UTF_8));
-        }
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(10 * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                ctx.writeAndFlush(Unpooled.copiedBuffer("Hello Netty2~", CharsetUtil.UTF_8));
+            }
         }, 5, TimeUnit.SECONDS);
 
         ByteBuf buf = (ByteBuf) msg;
         logger.info("客户端发送的消息是 : {}", buf.toString(CharsetUtil.UTF_8));
         logger.info("客户端的地址是 : {}", ctx.channel().remoteAddress());
-        }
+   }
 ```
 
 # FutureListener 监听器
@@ -312,16 +312,16 @@ public void run() {
 // 绑定端口，设置为同步，并且启动服务器
 ChannelFuture cf = bootstrap.bind(6666).sync();
 // 添加监听器
-        cf.addListener(new ChannelFutureListener() {
-@Override
-public void operationComplete(ChannelFuture future) throws Exception {
+cf.addListener(new ChannelFutureListener() {
+    @Override
+    public void operationComplete(ChannelFuture future) throws Exception {
         if (cf.isSuccess()) {
-        logger.info("监听端口 6666 成功");
+            logger.info("监听端口 6666 成功");
         } else {
-        logger.error("监听端口 6666 失败");
+            logger.error("监听端口 6666 失败");
         }
-        }
-        });
+    }
+});
 ```
 
 # BootStrap、ServerBootStrap
@@ -363,7 +363,7 @@ public ChannelFuture connect(String inetHost, int inetPort) {}
 // 返回当前正在执行IO的操作的通道
 Channel channel();
 // 等待异步执行完毕
-        ChannelFuture sync() throws InterruptedException;
+ChannelFuture sync() throws InterruptedException;
 ```
 
 # Channel
@@ -460,7 +460,7 @@ public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {}
 // 把 handler 添加到链表的最后一个位置
 ChannelPipeline addLast(ChannelHandler... handlers);
 // 把 handler 添加到链表的第一个位置
-        ChannelPipeline addFirst(ChannelHandler... handlers);
+ChannelPipeline addFirst(ChannelHandler... handlers);
 ```
 
 
@@ -480,9 +480,9 @@ ChannelPipeline addLast(ChannelHandler... handlers);
 // 关闭通道
 ChannelFuture close();
 // 刷新
-        ChannelHandlerContext flush();
+ChannelHandlerContext flush();
 // 将数据写到 ChannelPipeline 中，当前 CHannelHandler 的下一个 ChannelHandler 开始处理（出站）
-        ChannelFuture writeAndFlush(Object msg);
+ChannelFuture writeAndFlush(Object msg);
 ```
 
 # ChannelOption
@@ -796,7 +796,7 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<TextWeb
 
 > Protobuf 是一种轻便高效的结构化数据存储格式，可以用于结构化数据串行化(序列化)
 
-# 粘包 & 拆包
+# 粘包 & 半包
 
 > TCP 是面向流的，提供高可靠性服务。收发两端都要有成对的 Socket
 >
