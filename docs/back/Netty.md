@@ -431,6 +431,10 @@ public void handlerAdded(ChannelHandlerContext ctx) throws Exception {}
 public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {}
 ```
 
+## @ChannelHandler.Sharable
+
+> 如果处理器（ChannelHandler）加入了此注解，则表示一个实例对象可用提供给多个通道使用（ChannelPipeline）且不会出现线程安全问题
+
 # Pipeline & ChannelPipeline
 
 > ChannelPipeline 是一个 Handler 的集合，负责处理和拦截 inbound 或者 outbound 的事件和操作
@@ -805,3 +809,404 @@ public class WebSocketMessageHandler extends SimpleChannelInboundHandler<TextWeb
 > 将多次间隔较小且数量小的数据，合并为一个大的数据块，然后进行封包，
 >
 > 这样虽然提高了效率，但是接收端就难以分辨出完整的数据包了，因为面向流的通信是无消息保护边界的
+
+## 粘包
+### 现象
+
+发送 `abc` `def`，接收为 `abcdef`
+
+### 原因
+
+- 应用层：接收方 ByteBuf 设置太大（Netty默认1024）
+- 滑动窗口：假设发送方256bytes表示一个完整的报文，但由于接收方处理不及时且窗口大小足够大，这256bytes字节就会缓冲在接收方的滑动窗口中，当滑动窗口中缓冲了多个报文就会出现粘包
+- Nagle 算法
+
+## 半包
+
+### 现象
+
+发送 `abcdef` 接收 `abc` `de` `f`
+
+### 原因
+
+- 应用层：接收方 ByteBuf 小于实际发送数据的数量
+- 滑动窗口：加涉接收方的窗口只剩128bytes，发送方的报文大小是256bytes，这时放不下了，只能先发送前128bytes，等待ack后才能发送剩余部分，这就造成半包
+- MSS限制：当发送的数据草果 MSS 限制后，会将数据切分发送，就会照成半包
+
+## 粘包半包演示
+
+### 服务端
+
+```java
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        ByteBuf buf = (ByteBuf) msg;
+        logger.info("客户端发送的消息是 : {}", buf.toString(CharsetUtil.UTF_8));
+    }
+```
+
+### 客户端
+
+```java
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        for (int i = 0; i < 10; i++) {
+            ByteBuf buf = Unpooled.copiedBuffer("Hello Client" + i, CharsetUtil.UTF_8);
+            ctx.writeAndFlush(buf);
+        }
+    }
+```
+
+### 结果打印
+
+```log
+[nioEventLoopGroup-3-1] INFO io.mvvm.netty.decoder.NettyServerHandler - 客户端发送的消息是 : Hello Client0Hello Client1Hello Client2Hello Client3Hello Client4Hello Client5Hello Client6Hello Client7Hello Client8Hello Client9
+```
+
+### 结论
+
+> 代码解释
+>
+> 客户端和服务端建立连接后，循环向服务端发送10条消息
+>
+> 期望结果
+>
+> 服务端收到10条消息
+>
+> 实际结果
+>
+> 服务端将10条消息放在一起成为了一条消息，这就是粘包现象
+
+## 解决方案
+
+### 短连接
+
+> 建立连接后只发送一次消息，发送消息完毕后断开连接
+>
+> 缺点：不如用http
+
+### 定长解码器 FixedLengthFrameDecoder
+
+> 定常解码器即固定每条消息的固定长度，如果消息长度小于定长的长度，则进行补位到定长长度
+>
+> 优点：解决了短连接的问题
+>
+> 缺点，增加消息体积，逐一匹配字符效率低
+
+#### 服务端
+
+```java
+// 定长解码器,参数为：帧的长度
+ch.pipeline().addLast(new FixedLengthFrameDecoder(10));
+```
+
+#### 客户端
+
+```java
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        ByteBuf buffer = ctx.alloc().buffer();
+        char c = '0';
+        Random r = new Random();
+        for (int i = 0; i < 10; i++) {
+            byte[] bytes = getBytes(c, r.nextInt(9) + 1);
+            buffer.writeBytes(bytes);
+            c++;
+        }
+        ctx.writeAndFlush(buffer);
+    }
+
+    private static byte[] getBytes(char c, int i) {
+        StringBuilder sb = new StringBuilder();
+        for (int i1 = 0; i1 < i; i1++) {
+            sb.append(c);
+        }
+        int length = sb.length();
+        for (int i1 = 0; i1 < 10 - length; i1++) {
+            sb.append("-");
+        }
+        System.out.println(sb.toString());
+        return sb.toString().getBytes(StandardCharsets.UTF_8);
+    }
+```
+
+### 行解码器 LineBasedFrameDecoder
+
+> public LineBasedFrameDecoder(final int maxLength)
+>
+> 参数maxLength表示设置一个最大消息长度，如果消息超过这个长度还未找到分隔符，则会抛出`TooLongFrameException`异常
+>
+> public DelimiterBasedFrameDecoder(int maxFrameLength, ByteBuf... delimiters)
+>
+> 和上面那个的区别就是，LineBasedFrameDecoder采用 `\\r\\n` 实现分割
+>
+> DelimiterBasedFrameDecoder采用自定义分隔符
+>
+> 每条消息采用特定的分隔符进行分割，例如 `\\n`
+>
+> 优点: 解决了定长解码器的补位问题
+>
+> 缺点：逐一匹配字符，效率低
+
+#### 服务端
+
+```java
+// 行解码器
+ch.pipeline().addLast(new LineBasedFrameDecoder(1024));
+```
+
+#### 客户端
+
+```java
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        ByteBuf buffer = ctx.alloc().buffer();
+        char c = '0';
+        Random r = new Random();
+        for (int i = 0; i < 10; i++) {
+            byte[] bytes = getBytes(c, r.nextInt(256) + 1);
+            buffer.writeBytes(bytes);
+            c++;
+        }
+        ctx.writeAndFlush(buffer);
+    }
+    private static byte[] getBytes(char c, int i) {
+        StringBuilder sb = new StringBuilder();
+        for (int i1 = 0; i1 < i; i1++) {
+            sb.append(c);
+        }
+        sb.append("\n");
+        System.out.println(sb.toString());
+        return sb.toString().getBytes(StandardCharsets.UTF_8);
+    }
+```
+
+### LET 解码器 LengthFieldBasedFrameDecoder
+
+```java
+/**
+ * 基于长度字段帧的解码器
+ *
+ * maxFrameLength: 帧的最大长度，如果超出此长度会抛出TooLongFrameException异常
+ * lengthFieldOffset: 长度字段偏移量，(即偏移多少可以读到长度)
+ * lengthFieldLength: 长度字段长度，(长度有多少个字节)
+ * lengthAdjustment: 长度字段为基准，还有多少字节内容
+ * initialBytesToStrip: 从头去除几个字节，(例如，长度是4个字节，去除长度，则值为4)
+ */
+public LengthFieldBasedFrameDecoder(
+            int maxFrameLength,
+            int lengthFieldOffset, int lengthFieldLength,
+            int lengthAdjustment, int initialBytesToStrip){}
+```
+
+#### 测试
+
+> EmbeddedChannel用来测试处理器
+
+```java
+
+    public static void main(String[] args) {
+        EmbeddedChannel channel = new EmbeddedChannel(
+                new LengthFieldBasedFrameDecoder(1024, 0, 4, 0, 4),
+                new LoggingHandler(LogLevel.INFO)
+        );
+
+        ByteBuf buf = ByteBufAllocator.DEFAULT.buffer();
+        send(buf, "Hello");
+        send(buf, "Hi");
+        send(buf, "Test");
+
+        channel.writeInbound(buf);
+    }
+
+    private static void send(ByteBuf buf, String msg) {
+        byte[] bytes = msg.getBytes(StandardCharsets.UTF_8);
+        int length = bytes.length;
+        buf.writeInt(length); // 写入消息长度
+        buf.writeBytes(bytes); // 写入消息内容
+    }
+```
+
+
+
+# 协议设计与解析
+
+## 自定义协议要素
+
+- 魔术：用来在第一事件判断是否是无效数据包
+- 版本号：可以支持协议的升级
+- 序列化算法：消息正文采用哪种序列化方式，例如：json、protobuf、hessian、jdk
+- 指令类型：是登陆、注册、单聊、群聊...和业务相关
+- 请求序号：为了双工通信，提供异步能力
+- 正文长度
+- 消息正文
+
+## 自定义协议编解码实现
+
+### MessageCodec
+
+```java
+import io.mvvm.netty.codec.entity.Message;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.ByteToMessageCodec;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.List;
+
+public class MessageCodec extends ByteToMessageCodec<Message> {
+
+    @Override
+    public void encode(ChannelHandlerContext ctx, Message msg, ByteBuf out) throws Exception {
+        // 1. 魔数，4字节
+        out.writeBytes(new byte[]{1, 2, 3, 4});
+        // 2. 版本，1字节
+        out.writeByte(1);
+        // 3. 序列化算法(0:jdk, 1:json)，1字节
+        out.writeByte(0);
+        // 4. 指令类型，1字节
+        out.writeByte(msg.getMessageType());
+        // 5. 请求序号，4个字节
+        out.writeByte(msg.getSequenceId());
+        // 无意义，对齐填充，保持2的倍数
+        out.writeByte(0xff);
+        // 6. 获取内容的字节数组
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(msg);
+        byte[] bytes = bos.toByteArray();
+        // 7. 长度，4字节
+        out.writeInt(bytes.length);
+        // 8. 写入内容
+        out.writeBytes(bytes);
+    }
+
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        // 1. 魔术，4字节
+        int magicNum = in.readInt();
+        // 2. 版本，1字节
+        byte version = in.readByte();
+        // 3. 序列化算法(0:jdk, 1:json)，1字节
+        byte serializerAlgorithm = in.readByte();
+        // 4. 指令类型，1字节
+        byte messageType = in.readByte();
+        // 5. 请求序号，4个字节
+        int sequenceId = in.readInt();
+        // 无意义，对齐填充，保持2的倍数
+        in.readByte();
+        // 6. 长度，4字节
+        int length = in.readInt();
+        // 7. 读取内容
+        byte[] bytes = new byte[length];
+        // 缓冲区，开始，结束
+        in.readBytes(bytes, 0, length);
+        ObjectInputStream stream = new ObjectInputStream(new ByteArrayInputStream(bytes));
+        Message message = (Message) stream.readObject();
+
+        
+        out.add(message);
+    }
+}
+```
+
+### Message
+
+```java
+import java.io.Serializable;
+
+public abstract class Message implements Serializable {
+
+    private int messageType;
+    private int sequenceId;
+
+    public abstract int getMessageType();
+
+    public static final int LoginRequestMessage = 0;
+
+    public int getSequenceId() {
+        setSequenceId(1);
+        return sequenceId;
+    }
+
+    public void setSequenceId(int sequenceId) {
+        this.sequenceId = sequenceId;
+    }
+
+}
+```
+
+### LoginRequestMessage
+```java
+public class LoginRequestMessage extends Message{
+
+    private String username;
+    private String password;
+    private String nickname;
+
+    public LoginRequestMessage() {
+    }
+
+    public LoginRequestMessage(String username, String password, String nickname) {
+        this.username = username;
+        this.password = password;
+        this.nickname = nickname;
+    }
+
+    @Override
+    public int getMessageType() {
+        return LoginRequestMessage;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+}
+```
+
+### main
+```java
+    public static void main(String[] args) throws Exception {
+        EmbeddedChannel channel = new EmbeddedChannel(
+                // 最大长度，偏移量，存储内容长度的长度，补偿几个字节到长度位置，去除多少字节内容
+                new LengthFieldBasedFrameDecoder(1024, 12, 4, 0, 0),
+                new LoggingHandler(LogLevel.INFO),
+                new MessageCodec()
+        );
+
+        // encoder
+        Message message = new LoginRequestMessage("root", "123456", "zhangsan");
+        channel.writeOutbound(message);
+
+        // decoder
+        Message message1 = new LoginRequestMessage("root", "123456", "zhangsan");
+        ByteBuf buf = ByteBufAllocator.DEFAULT.buffer();
+        new MessageCodec().encode(null, message1, buf);
+
+        // 入站
+        channel.writeInbound(buf);
+    }
+```
