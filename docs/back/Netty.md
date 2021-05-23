@@ -1,3 +1,91 @@
+# Netty 核心组件
+
+- Channel
+- Callback
+- Future
+- Event & ChannelHandler
+
+## Channel
+
+> Channel 是 Java NIO 的一个基础构造
+>
+> Channel 是`入站`或`出站`数据的载体。因此它可以被打开、关闭或者连接、断开连接
+>
+
+## Callback
+
+> Netty 内部使用回调来处理事件；当一个回调被触发时，相关的事件可用被一个 `ChannelHandler` 接口的实现来处理
+>
+
+```java
+public class Callback extends ChannelInboundHandlerAdapter {
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("建立新连接");
+    }
+}
+```
+
+## Future
+
+> Future 提供了某种操作完成时通知应用程序的方式
+>
+
+### ChannelFuture
+
+> ChannelFuture 用于执行异步操作的时候使用
+>
+> 它提供了额外的方法，能够帮助我们注册一个或者多个 `ChannelFutureListener` 实例
+>
+> 监听器的回调方法`operationComplete()`将会在对应的操作完成时调用
+>
+> 然后监听器可以判断该操作是否成功
+>
+> 如果失败可以检索产生的 `Throwable`
+>
+> 每一个Netty出战的 I/O 操作都会返回一个ChannelFuture
+>
+
+```java
+Bootstrap bootstrap = new Bootstrap();
+// 连接远程节点
+ChannelFuture future = bootstrap.connect("127.0.0.1", 8880).sync();
+future.addListener(new ChannelFutureListener() { // 注册一个 ChannelFutureListener，在完成操作时获得通知 
+    @Override
+    public void operationComplete(ChannelFuture future) throws Exception {
+        if (future.isSuccess()) {
+            // 如果操作成功则做一些操作
+            System.out.println("操作成功");
+        } else {
+            // 失败，打印堆栈信息，或者其他操作
+            Throwable cause = future.cause();
+            cause.printStackTrace();
+        }
+    }
+});
+```
+
+## Event & ChannelHandler
+
+> Netty 使用不同的事件来通知我们状态的改变或者是操作的改变，这样可以让我们基于已经发生的事件来触发适当的操作
+>
+> 每一个事件都可以被分发到 ChannelHandler 类中的某个用户实现的方法
+>
+> 例如：记录日志、数据转换、流控制、应用程序逻辑
+>
+
+### Netty 入站相关事件
+
+- 连接已被记过或者连接失活
+- 数据读取
+- 用户事件
+- 错误事件
+
+### Netty 出站相关事件
+
+- 打开或者关闭到远程节点的连接
+- 将数据写道或者冲刷到套接字
+
 # Netty 快速开始
 
 ## 引入依赖
@@ -6,32 +94,32 @@
 
 ```xml
     <dependencies>
-    <!-- Netty -->
-    <dependency>
-        <groupId>io.netty</groupId>
-        <artifactId>netty-all</artifactId>
-        <version>4.1.48.Final</version>
-    </dependency>
-    <!-- 以下为日志依赖，可省略 -->
-    <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>1.2.3</version>
-        <scope>compile</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-to-slf4j</artifactId>
-        <version>2.13.3</version>
-        <scope>compile</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jul-to-slf4j</artifactId>
-        <version>1.7.30</version>
-        <scope>compile</scope>
-    </dependency>
-</dependencies>
+        <!-- Netty -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.48.Final</version>
+        </dependency>
+        <!-- 以下为日志依赖，可省略 -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-to-slf4j</artifactId>
+            <version>2.13.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>1.7.30</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 ```
 
 ## 服务端
@@ -101,54 +189,56 @@ public class NettyServer {
 ```java
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@ChannelHandler.Sharable
 public class NettyServerHandler extends ChannelInboundHandlerAdapter {
 
     private final static Logger logger = LoggerFactory.getLogger(NettyServerHandler.class);
 
     /**
-     * 读取客户端发送过来的数据
+     * 对于每个传入的消息都会调用
      * @param ctx   上下文对象，包含 pipeline(管道)、channel(通道)、地址
      * @param msg   客户端传递来的消息
      * @throws Exception
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        logger.info("server context : {}", ctx);
-
         ByteBuf buf = (ByteBuf) msg;
-
-        logger.info("客户端发送的消息是 : {}", buf.toString(CharsetUtil.UTF_8));
-        logger.info("客户端的地址是 : {}", ctx.channel().remoteAddress());
+        // 将接收到的消息写给客户端，而不冲刷出站消息
+        ctx.write(buf);
     }
 
     /**
-     * 数据读取完毕
+     * 通知 ChannelInboundHandler 最后一次对 channelRead() 的调用是当前批量读取中的最后一条消息
      * @param ctx
      * @throws Exception
      */
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-
-        // 将数据写入到缓存，并刷新
-        // 将数据编码后发送
-        ctx.writeAndFlush(Unpooled.copiedBuffer("Hello Netty1~", CharsetUtil.UTF_8));
-
+        // 将暂存于 ChannelOutboundBuffer 中的消息冲刷到远程节点，
+        // 并在下一次调用flush()或者writeAndFlush()方法时将会尝试写出到套接字
+        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)
+                // 监听消息冲刷完毕后关闭该 Channel
+                .addListener(ChannelFutureListener.CLOSE);
     }
 
     /**
-     * 发生异常
+     * 的读取操作期间，有异常抛出时调用
      * @param ctx
      * @param cause
      * @throws Exception
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        // 打印堆栈异常
+        cause.printStackTrace();
+        // 关闭 Channel
         ctx.close();
     }
 }
@@ -433,7 +523,13 @@ public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {}
 
 ## @ChannelHandler.Sharable
 
-> 如果处理器（ChannelHandler）加入了此注解，则表示一个实例对象可用提供给多个通道使用（ChannelPipeline）且不会出现线程安全问题
+> 表示一个 ChannelHandler 可以被多个 Channel 安全的共享
+>
+> Netty 会在每个 Channel 中都添加处理器，如果每个通道都创建一次对象，对内存的消耗无疑是非常大的
+>
+> 所以一般在线程安全的处理器中，都会标注此注解，表示可以只创建一次对象
+>
+> 一般在没有共享变量的处理器都可以加入此注解
 
 # Pipeline & ChannelPipeline
 
