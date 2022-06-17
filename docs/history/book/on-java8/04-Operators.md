@@ -133,7 +133,7 @@ public class PassObject {
 2: x.c: z
 ```
 
-在许多编程语言中，方法 `f()` 似乎会在内部复制其参数 **Letter y**。但是一旦传递了一个引用，那么实际上 `y.c ='z';` 是在方法 `f()` 之外改变对象。别名现象以及其解决方案是个复杂的问题，在附录中有包含：[对象传递和返回](./Appendix-Passing-and-Returning-Objects.md)。意识到这一点，我们可以警惕类似的陷阱。
+在许多编程语言中，方法 `f()` 似乎会在内部复制其参数 **Letter y**。但是一旦传递了一个引用，那么实际上 `y.c ='z';` 是在方法 `f()` 之外改变对象。别名现象以及其解决方案是个复杂的问题，在附录中有包含：[对象传递和返回](Appendix-Passing-and-Returning-Objects.md)。意识到这一点，我们可以警惕类似的陷阱。
 
 <!-- Mathematical Operators -->
 ## 算术运算符
@@ -361,7 +361,7 @@ public class EqualsMethod2 {
 false
 ```
 
-上例的结果再次令人困惑：结果是 **false**。原因： `equals()` 的默认行为是比较对象的引用而非具体内容。因此，除非你在新类中覆写 `equals()` 方法，否则我们将获取不到想要的结果。不幸的是，在学习 [复用](./08-Reuse.md)（**Reuse**） 章节后我们才能接触到“覆写”（**Override**），并且直到 [附录:集合主题](./Appendix-Collection-Topics.md)，才能知道定义 `equals()` 方法的正确方式，但是现在明白 `equals()` 行为方式也可能为你节省一些时间。
+上例的结果再次令人困惑：结果是 **false**。原因： `equals()` 的默认行为是比较对象的引用而非具体内容。因此，除非你在新类中覆写 `equals()` 方法，否则我们将获取不到想要的结果。不幸的是，在学习 [复用](08-Reuse.md)（**Reuse**） 章节后我们才能接触到“覆写”（**Override**），并且直到 [附录:集合主题](Appendix-Collection-Topics.md)，才能知道定义 `equals()` 方法的正确方式，但是现在明白 `equals()` 行为方式也可能为你节省一些时间。
 
 大多数 Java 库类通过覆写 `equals()` 方法比较对象的内容而不是其引用。
 

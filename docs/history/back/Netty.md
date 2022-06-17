@@ -543,7 +543,7 @@ public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {}
 >
 > 在 Netty 中，每个 Channel 都仅有一个 ChannelPipeline，
 
-![netty-001](./image/netty-001.png)
+![netty-001](image/netty-001.png)
 
 > 一个 Channel 包含了一个 ChannelPipeline， 而 ChannelPipeline 中又维护了一个由 ChannelHandlerContext 组成的双向链表
 >

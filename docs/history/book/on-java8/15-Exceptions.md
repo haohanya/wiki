@@ -267,7 +267,7 @@ LoggingExceptions.main(LoggingExceptions.java:25)
 Caught LoggingException
 ```
 
-静态的 Logger.getLogger() 方法创建了一个 String 参数相关联的 Logger 对象（通常与错误相关的包名和类名），这个 Logger 对象会将其输出发送到 System.err。向 Logger 写入的最简单方式就是直接调用与日志记录消息的级别相关联的方法，这里使用的是 severe()。为了产生日志记录消息，我们欲获取异常抛出处的栈轨迹，但是 printStackTrace() 不会默认地产生字符串。为了获取字符串，我们需要使用重载的 printStackTrace() 方法，它接受一个 java.io.PrintWriter 对象作为参数（PrintWriter 会在 [附录：I/O 流 ](./Appendix-IO-Streams.md) 一章详细介绍）。如果我们将一个 java.io.StringWriter 对象传递给这个 PrintWriter 的构造器，那么通过调用 toString() 方法，就可以将输出抽取为一个 String。
+静态的 Logger.getLogger() 方法创建了一个 String 参数相关联的 Logger 对象（通常与错误相关的包名和类名），这个 Logger 对象会将其输出发送到 System.err。向 Logger 写入的最简单方式就是直接调用与日志记录消息的级别相关联的方法，这里使用的是 severe()。为了产生日志记录消息，我们欲获取异常抛出处的栈轨迹，但是 printStackTrace() 不会默认地产生字符串。为了获取字符串，我们需要使用重载的 printStackTrace() 方法，它接受一个 java.io.PrintWriter 对象作为参数（PrintWriter 会在 [附录：I/O 流 ](Appendix-IO-Streams.md) 一章详细介绍）。如果我们将一个 java.io.StringWriter 对象传递给这个 PrintWriter 的构造器，那么通过调用 toString() 方法，就可以将输出抽取为一个 String。
 
 尽管由于 LoggingException 将所有记录日志的基础设施都构建在异常自身中，使得它所使用的方式非常方便，并因此不需要客户端程序员的干预就可以自动运行，但是更常见的情形是我们需要捕获和记录其他人编写的异常，因此我们必须在异常处理程序中生成日志消息；
 
@@ -1402,7 +1402,7 @@ StormyInning.walk() 不能通过编译是因为它抛出了异常，而 Inning.w
 
 你也许会认为使用 finally 就可以解决问题。但问题并非如此简单，因为 finally 会每次都执行清理代码。如果构造器在其执行过程中半途而废，也许该对象的某些部分还没有被成功创建，而这些部分在 finaly 子句中却是要被清理的。
 
-在下面的例子中，建立了一个 InputFile 类，它能打开一个文件并且每次读取其中的一行。这里使用了 Java 标准输入/输出库中的 FileReader 和 BufferedReader 类（将在 [附录：I/O 流 ](./Appendix-IO-Streams.md) 中讨论），这些类的基本用法很简单，你应该很容易明白：
+在下面的例子中，建立了一个 InputFile 类，它能打开一个文件并且每次读取其中的一行。这里使用了 Java 标准输入/输出库中的 FileReader 和 BufferedReader 类（将在 [附录：I/O 流 ](Appendix-IO-Streams.md) 中讨论），这些类的基本用法很简单，你应该很容易明白：
 
 ```java
 // exceptions/InputFile.java
@@ -1624,7 +1624,7 @@ main(String[] args) throws IOException {
 1. 需要资源清理
 2. 需要在特定的时刻进行资源清理，比如你离开作用域的时候（在通常情况下意味着通过异常进行清理）。
 
-一个常见的例子是 jav.io.FileInputstream（将会在 [附录：I/O 流 ](./Appendix-IO-Streams.md) 中提到）。要正确使用它，你必须编写一些棘手的样板代码：
+一个常见的例子是 jav.io.FileInputstream（将会在 [附录：I/O 流 ](Appendix-IO-Streams.md) 中提到）。要正确使用它，你必须编写一些棘手的样板代码：
 
 ```java
 // exceptions/MessyExceptions.java
@@ -2050,7 +2050,7 @@ public class MainException {
 }
 ```
 
-注意，main() 作为一个方法也可以有异常说明，这里异常的类型是 Exception，它也是所有“被检查的异常”的基类。通过把它传递到控制台，就不必在 main() 里写 try-catch 子句了。（不过，实际的文件输人输出操作比这个例子要复杂得多。你将会在 [文件](./Files.md) 和 [附录：I/O 流](./Appendix-IO-Streams.md) 章节中学到更多）
+注意，main() 作为一个方法也可以有异常说明，这里异常的类型是 Exception，它也是所有“被检查的异常”的基类。通过把它传递到控制台，就不必在 main() 里写 try-catch 子句了。（不过，实际的文件输人输出操作比这个例子要复杂得多。你将会在 [文件](./Files.md) 和 [附录：I/O 流](Appendix-IO-Streams.md) 章节中学到更多）
 
 ### 把“被检查的异常”转换为“不检查的异常”
 

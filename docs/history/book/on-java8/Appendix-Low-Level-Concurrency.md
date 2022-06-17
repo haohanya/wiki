@@ -5,7 +5,7 @@
 
 > 尽管不建议你自己编写底层 Java 并发代码，但是这样通常有助于了解它是如何工作的。
 
-[并发编程](./24-Concurrent-Programming.md) 章节中介绍了一些用于高级并发的概念，包括为 Java 并发编程而最新提出的，更安全的概念（ parallel Streams 和 CompletableFutures  ）。本附录则介绍在 Java 中底层并发概念，因此在阅读本篇时，你能有所了解掌握这些代码。你还会将进一步了解并发的普遍问题。
+[并发编程](24-Concurrent-Programming.md) 章节中介绍了一些用于高级并发的概念，包括为 Java 并发编程而最新提出的，更安全的概念（ parallel Streams 和 CompletableFutures  ）。本附录则介绍在 Java 中底层并发概念，因此在阅读本篇时，你能有所了解掌握这些代码。你还会将进一步了解并发的普遍问题。
 
 在 Java 的早期版本中, 底层并发概念是并发编程的重要组成部分。我们会着眼于围绕这些技巧的复杂性以及为何你应该避免它们而谈。 “并发编程” 章节展示最新的 Java 版本(尤其是 Java 8)所提供的改进技巧，这些技巧使得并发的使用，如果本来不容易使用，也会变得更容易些。
 
@@ -14,7 +14,7 @@
 
 并发将程序划分成独立分离运行的任务。每个任务都由一个 *执行线程* 来驱动，我们通常将其简称为 *线程* 。而一个 *线程* 就是操作系统进程中单一顺序的控制流。因此，单个进程可以有多个并发执行的任务，但是你的程序使得每个任务都好像有自己的处理器一样。此线程模型为编程带来了便利，它简化了在单一程序中处理变戏法般的多任务过程。操作系统则从处理器上分配时间片到你程序的所有线程中。
 
-Java 并发的核心机制是 **Thread** 类，在该语言最初版本中， **Thread （线程）** 是由程序员直接创建和管理的。随着语言的发展以及人们发现了更好的一些方法，中间层机制 - 特别是 **Executor** 框架  - 被添加进来，以消除自己管理线程时候的心理负担（及错误）。 最终，甚至发展出比 **Executor** 更好的机制，如 [并发编程](./24-Concurrent-Programming.md) 一章所示。
+Java 并发的核心机制是 **Thread** 类，在该语言最初版本中， **Thread （线程）** 是由程序员直接创建和管理的。随着语言的发展以及人们发现了更好的一些方法，中间层机制 - 特别是 **Executor** 框架  - 被添加进来，以消除自己管理线程时候的心理负担（及错误）。 最终，甚至发展出比 **Executor** 更好的机制，如 [并发编程](24-Concurrent-Programming.md) 一章所示。
 
 **Thread（线程）** 是将任务关联到处理器的软件概念。虽然创建和使用 **Thread**  类看起来与任何其他类都很相似，但实际上它们是非常不同的。当你创建一个 **Thread** 时，JVM 将分配一大块内存到专为线程保留的特殊区域上，用于提供运行任务时所需的一切，包括：
 
@@ -30,7 +30,7 @@ Java 并发的核心机制是 **Thread** 类，在该语言最初版本中， **
 
 ### 最佳线程数
 
-如果你查看第 24 章 [并发编程](./24-Concurrent-Programming.md) 中使用 *CachedThreadPool* 的用例，你会发现 **ExecutorService** 为每个我们提交的任务分配一个线程。然而，并行流（**parallel Stream**）在 [**CountingStream.java** ](https://github.com/BruceEckel/OnJava8-Examples/blob/master/concurrent/CountingStream.java
+如果你查看第 24 章 [并发编程](24-Concurrent-Programming.md) 中使用 *CachedThreadPool* 的用例，你会发现 **ExecutorService** 为每个我们提交的任务分配一个线程。然而，并行流（**parallel Stream**）在 [**CountingStream.java** ](https://github.com/BruceEckel/OnJava8-Examples/blob/master/concurrent/CountingStream.java
 ) 中只分配了 8 个线程（id 中 1-7 为工作线程，8 为  `main()` 方法的主线程，它巧妙地将其用作额外的并行流）。如果你尝试提高 `range()` 方法中的上限值，你会看到没有创建额外的线程。这是为什么？
 
 我们可以查出当前机器上处理器的数量：
@@ -637,7 +637,7 @@ No odd numbers discovered
 
 ### 可见性
 
-第二个问题属于 [Java 并发的四句格言](./24-Concurrent-Programming.md#四句格言)里第二句格言 “一切都重要” 的部分。你必须假设每个任务拥有自己的处理器，并且每个处理器都有自己的本地内存缓存。该缓存准许处理器允许的更快，因为处理器并不总是需要从比起使用缓存显著花费更多时间的主内存中获取数据。
+第二个问题属于 [Java 并发的四句格言](24-Concurrent-Programming.md#四句格言)里第二句格言 “一切都重要” 的部分。你必须假设每个任务拥有自己的处理器，并且每个处理器都有自己的本地内存缓存。该缓存准许处理器允许的更快，因为处理器并不总是需要从比起使用缓存显著花费更多时间的主内存中获取数据。
 
 出现这个问题是因为 Java 尝试尽可能地提高执行效率。缓存的主要目的是避免从主内存中读取数据。当并发时，有时不清楚 Java 什么时候应该将值从主内存刷新到本地缓存 — 而这个问题称为 *缓存一致性* （ *cache coherence* ）。
 
@@ -649,7 +649,7 @@ No odd numbers discovered
 2. 这些访问中至少有一个是写操作。
 3. 你尝试避免同步 （在现代 Java 中，你可以使用高级工具来避免进行同步）。
 
-举个例字，如果你使用变量作为停止任务的标志值。那么该变量至少必须声明为 **volatile** （尽管这并不一定能保证这种标志的线程安全）。否则，当一个任务更改标志值时，这些更改可以存储在本地处理器缓存中，而不会刷新到主内存。当另一个任务查看标记值时，它不会看到更改。我更喜欢在 [并发编程](./24-Concurrent-Programming.md) 中 [终止耗时任务](./24-Concurrent-Programming.md#终止耗时任务) 章节中使用 **AtomicBoolean** 类型作为标志值的办法
+举个例字，如果你使用变量作为停止任务的标志值。那么该变量至少必须声明为 **volatile** （尽管这并不一定能保证这种标志的线程安全）。否则，当一个任务更改标志值时，这些更改可以存储在本地处理器缓存中，而不会刷新到主内存。当另一个任务查看标记值时，它不会看到更改。我更喜欢在 [并发编程](24-Concurrent-Programming.md) 中 [终止耗时任务](24-Concurrent-Programming.md#终止耗时任务) 章节中使用 **AtomicBoolean** 类型作为标志值的办法
 
 任务对其自身变量所做的任何写操作都始终对该任务可见，因此，如果只在任务中使用变量，你不需要使其变量声明为 **volatile** 。
 
@@ -1490,7 +1490,7 @@ NANOSECONDS.convert(delta, MILLISECONDS);
 
 这是一个很基础的优先级队列，它具有可阻塞的读取操作。在下面的示例中， **Prioritized** 对象会被赋予优先级编号。几个 **Producer** 任务的实例会插入 **Prioritized** 对象到 **PriorityBlockingQueue** 中，但插入之间会有随机延时。然后，单个 **Consumer** 任务在执行 `take()` 时会显示多个选项，**PriorityBlockingQueue** 会将当前具有最高优先级的 **Prioritized** 对象提供给它。
 
-在 **Prioritized** 中的静态变量 **counter** 是 **AtomicInteger** 类型。这是必要的，因为有多个 **Producer** 并行运行；如果不是 **AtomicInteger** 类型，你将会看到重复的 **id** 号。 这个问题在 [并发编程](./24-Concurrent-Programming.md) 的 [构造函数非线程安全](./24-Concurrent-Programming.md) 一节中讨论过。
+在 **Prioritized** 中的静态变量 **counter** 是 **AtomicInteger** 类型。这是必要的，因为有多个 **Producer** 并行运行；如果不是 **AtomicInteger** 类型，你将会看到重复的 **id** 号。 这个问题在 [并发编程](24-Concurrent-Programming.md) 的 [构造函数非线程安全](24-Concurrent-Programming.md) 一节中讨论过。
 
 ```java
 // lowlevel/PriorityBlockingQueueDemo.java
@@ -1639,7 +1639,7 @@ public class PriorityBlockingQueueDemo {
 
 ### 无锁集合
 
-[集合](./12-Collections.md) 章节强调集合是基本的编程工具，这也要求包含并发性。因此，早期的集合比如 **Vector** 和 **Hashtable** 有许多使用 **synchronized** 机制的方法。当这些集合不是在多线程应用中使用时，这就导致了不可接收的开销。在 Java 1.2 版本中，新的集合库是非同步的，而给 **Collection** 类赋予了各种 **static** **synchronized** 修饰的方法来同步不同的集合类型。虽然这是一个改进，因为它让你可以选择是否对集合使用同步，但是开销仍然基于同步锁定。 Java 5 版本添加新的集合类型，专门用于增加线程安全性能，使用巧妙的技术来消除锁定。
+[集合](12-Collections.md) 章节强调集合是基本的编程工具，这也要求包含并发性。因此，早期的集合比如 **Vector** 和 **Hashtable** 有许多使用 **synchronized** 机制的方法。当这些集合不是在多线程应用中使用时，这就导致了不可接收的开销。在 Java 1.2 版本中，新的集合库是非同步的，而给 **Collection** 类赋予了各种 **static** **synchronized** 修饰的方法来同步不同的集合类型。虽然这是一个改进，因为它让你可以选择是否对集合使用同步，但是开销仍然基于同步锁定。 Java 5 版本添加新的集合类型，专门用于增加线程安全性能，使用巧妙的技术来消除锁定。
 
 无锁集合有一个有趣的特性：只要读取者仅能看到已完成修改的结果，对集合的修改就可以同时发生在读取发生时。这是通过一些策略实现的。为了让你了解它们是如何工作的，我们来看看其中的一些。
 
@@ -1669,12 +1669,12 @@ public class PriorityBlockingQueueDemo {
 以下是并发编程的步骤:
 
 1. 不要使用它。想一些其他方法来使你写的程序变的更快。
-2. 如果你必须使用它，请使用在 [并发编程](./24-Concurrent-Programming.md) - parallel Streams and CompletableFutures 中展示的现代高级工具。
+2. 如果你必须使用它，请使用在 [并发编程](24-Concurrent-Programming.md) - parallel Streams and CompletableFutures 中展示的现代高级工具。
 3. 不要在任务间共享变量，在任务之间必须传递的任何信息都应该使用 Java.util.concurrent 库中的并发数据结构。
 4. 如果必须在任务之间共享变量，请使用 java.util.concurrent.atomic 里面其中一种类型，或在任何直接或间接访问这些变量的方法上应用 synchronized。 当你不这样做时，很容易被愚弄，以为你已经把所有东西都包括在内。 说真的，尝试使用步骤 3。
 5. 如果步骤 4 产生的结果太慢，你可以尝试使用volatile 或其他技术来调整代码，但是如果你正在阅读本书并认为你已经准备好尝试这些方法，那么你就超出了你的深度。 返回步骤＃1。
 
-通常可以只使用 java.util.concurrent 库组件来编写并发程序，完全避免来自应用 volatile 和 synchronized 的挑战。注意，我可以通过 [并发编程](./24-Concurrent-Programming.md)  中的示例来做到这一点。
+通常可以只使用 java.util.concurrent 库组件来编写并发程序，完全避免来自应用 volatile 和 synchronized 的挑战。注意，我可以通过 [并发编程](24-Concurrent-Programming.md)  中的示例来做到这一点。
 
 [^1]: 在某些平台上，特别是 Windows ，默认值可能非常难以查明。你可以使用 -Xss 标志调整堆栈大小。
 

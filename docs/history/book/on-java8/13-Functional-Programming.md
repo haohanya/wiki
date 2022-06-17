@@ -1490,7 +1490,7 @@ public class CurriedIntAdd {
 
 即使没有函数式支持，像 C 这样的基础语言，也可以按照一定的原则编写纯函数式程序。Java 8 让函数式编程更简单，不过我们要确保一切是 `final` 的，同时你的所有方法和函数没有副作用。因为 Java 在本质上并非是不可变语言，我们无法通过编译器查错。
 
-这种情况下，我们可以借助第三方工具[^9]，但使用 Scala 或 Clojure 这样的语言可能更简单。因为它们从一开始就是为保持不变性而设计的。你可以采用这些语言来编写你的 Java 项目的一部分。如果必须要用纯函数式编写，则可以用 Scala（需要一些规则） 或 Clojure （需要的规则更少）。虽然 Java 支持[并发编程](./24-Concurrent-Programming.md)，但如果这是你项目的核心部分，你应该考虑在项目部分功能中使用 `Scala` 或 `Clojure` 之类的语言。
+这种情况下，我们可以借助第三方工具[^9]，但使用 Scala 或 Clojure 这样的语言可能更简单。因为它们从一开始就是为保持不变性而设计的。你可以采用这些语言来编写你的 Java 项目的一部分。如果必须要用纯函数式编写，则可以用 Scala（需要一些规则） 或 Clojure （需要的规则更少）。虽然 Java 支持[并发编程](24-Concurrent-Programming.md)，但如果这是你项目的核心部分，你应该考虑在项目部分功能中使用 `Scala` 或 `Clojure` 之类的语言。
 
 <!-- Summary -->
 ## 本章小结
@@ -1511,7 +1511,7 @@ Lambda 表达式和方法引用并没有将 Java 转换成函数式语言，而�
 [^3]: 有时函数式语言将其描述为“代码即数据”。
 [^4]: 这个语法来自 C++。
 [^5]: 我还没有验证过这种说法。
-[^6]: 当你理解了[并发编程](./24-Concurrent-Programming.md)章节的内容，你就能明白为什么更改共享变量 “不是线程安全的” 的了。
+[^6]: 当你理解了[并发编程](24-Concurrent-Programming.md)章节的内容，你就能明白为什么更改共享变量 “不是线程安全的” 的了。
 [^7]: 接口能够支持方法的原因是它们是 Java 8 默认方法，你将在下一章中了解到。
 [^8]: 一些语言，如 Python，允许像调用其他函数一样调用组合函数。但这是 Java，所以我们做做可为之事。
 [^9]: 例如，[Immutables](https://immutables.github.io/) 和 [Mutability Detector](https://mutabilitydetector.github.io/MutabilityDetector/)。

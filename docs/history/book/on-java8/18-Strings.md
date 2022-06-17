@@ -236,7 +236,7 @@ public class UsingStringBuilder {
 
 `string2()` 使用了 `Stream`，这样代码更加简洁美观。可以证明，`Collectors.joining()` 内部也是使用的 `StringBuilder`，这种写法不会影响性能！
 
-`StringBuilder `是 Java SE5 引入的，在这之前用的是 `StringBuffer`。后者是线程安全的（参见[并发编程](./24-Concurrent-Programming.md)），因此开销也会大些。使用 `StringBuilder` 进行字符串操作更快一点。
+`StringBuilder `是 Java SE5 引入的，在这之前用的是 `StringBuffer`。后者是线程安全的（参见[并发编程](24-Concurrent-Programming.md)），因此开销也会大些。使用 `StringBuilder` 进行字符串操作更快一点。
 
 <!-- Unintended Recursion -->
 
@@ -340,7 +340,7 @@ System.out.printf("Row 1: [%d %f]%n", x, y);
 ```
 这一行代码在运行的时候，首先将 `x` 的值插入到 `%d_` 的位置，然后将 `y` 的值插入到 `%f` 的位置。这些占位符叫做*格式修饰符*，它们不仅指明了插入数据的位置，同时还指明了将会插入什么类型的变量，以及如何格式化。在这个例子中 `%d` 表示 `x` 是一个整数，`%f` 表示 `y` 是一个浮点数（`float` 或者 `double`）。
 ### `System.out.format()`
-Java SE5 引入了 `format()` 方法，可用于 `PrintStream` 或者 `PrintWriter` 对象（你可以在 [附录:流式 I/O](./Appendix-IO-Streams.md) 了解更多内容），其中也包括 `System.out` 对象。`format()` 方法模仿了 C 语言的 `printf()`。如果你比较怀旧的话，也可以使用 `printf()`。以下是一个简单的示例：
+Java SE5 引入了 `format()` 方法，可用于 `PrintStream` 或者 `PrintWriter` 对象（你可以在 [附录:流式 I/O](Appendix-IO-Streams.md) 了解更多内容），其中也包括 `System.out` 对象。`format()` 方法模仿了 C 语言的 `printf()`。如果你比较怀旧的话，也可以使用 `printf()`。以下是一个简单的示例：
 ```java
 // strings/SimpleFormat.java 
 
@@ -409,7 +409,7 @@ Terry The Turtle is at (3,3)
 ```
 格式化修饰符 `%s` 表明这里需要 `String` 参数。
 
-所有的 `tommy` 都将输出到 `System.out`，而所有的 `terry` 则都输出到 `System.out` 的一个别名中。`Formatter` 的重载构造器支持输出到多个路径，不过最常用的还是 `PrintStream()`（如上例）、`OutputStream` 和 `File`。你可以在 [附录:流式 I/O](././Appendix-IO-Streams.md) 中了解更多信息。
+所有的 `tommy` 都将输出到 `System.out`，而所有的 `terry` 则都输出到 `System.out` 的一个别名中。`Formatter` 的重载构造器支持输出到多个路径，不过最常用的还是 `PrintStream()`（如上例）、`OutputStream` 和 `File`。你可以在 [附录:流式 I/O](Appendix-IO-Streams.md) 中了解更多信息。
 ### 格式化修饰符
 在插入数据时，如果想要优化空格与对齐，你需要更精细复杂的格式修饰符。以下是其通用语法：
 ```java
@@ -674,7 +674,7 @@ public class Hex {
                   ... 
 */
 ```
-为了打开及读入二进制文件，我们用到了另一个工具 `Files.readAllBytes()`，这已经在 [Files章节](./17-Files.md) 介绍过了。这里的 `readAllBytes()` 方法将整个文件以 `byte` 数组的形式返回。
+为了打开及读入二进制文件，我们用到了另一个工具 `Files.readAllBytes()`，这已经在 [Files章节](17-Files.md) 介绍过了。这里的 `readAllBytes()` 方法将整个文件以 `byte` 数组的形式返回。
 
 <!-- Regular Expressions -->
 
@@ -1265,7 +1265,7 @@ thE spEcIAl dElImItErs, thEn prOcEss thE
 ExtrActEd blOck. 
 */
 ```
-此处使用上一章介绍过的 [`Files`](./17-Files.md) 类打开并读入文件。`Files.lines()` 返回一个 `Stream` 对象，包含读入的所有行，`Collectors.joining()` 在每一行的结尾追加参数字符序列，最终拼接成一个 `String` 对象。
+此处使用上一章介绍过的 [`Files`](17-Files.md) 类打开并读入文件。`Files.lines()` 返回一个 `Stream` 对象，包含读入的所有行，`Collectors.joining()` 在每一行的结尾追加参数字符序列，最终拼接成一个 `String` 对象。
 
 `mInput` 匹配 `/*!` 和 `！*/` 之间的所有文字（注意分组的括号）。接下来，将存在两个或两个以上空格的地方，缩减为一个空格，并且删除每行开头部分的所有空格（为了使每一行都达到这个效果，而不仅仅是删除文本开头部分的空格，这里特意开启了多行模式）。这两个替换操作所使用的的 `replaceAll()` 是 `String` 对象自带的方法，在这里，使用此方法更方便。注意，因为这两个替换操作都只使用了一次 `replaceAll()`，所以，与其编译为 `Pattern`，不如直接使用 `String` 的 `replaceAll()` 方法，而且开销也更小些。
 
@@ -1381,7 +1381,7 @@ In 5 years you will be 27.
 My favorite double is 0.809015. 
 */
 ```
-`input` 字段使用的类来自 `java.io`，[附录:流式 I/O](./Appendix-IO-Streams.md) 详细介绍了相关内容。`StringReader` 将 `String` 转化为可读的流对象，然后用这个对象来构造 `BufferedReader` 对象，因为我们要使用 `BufferedReader` 的 `readLine()` 方法。最终，我们可以使用 `input` 对象一次读取一行文本，就像从控制台读入标准输入一样。
+`input` 字段使用的类来自 `java.io`，[附录:流式 I/O](Appendix-IO-Streams.md) 详细介绍了相关内容。`StringReader` 将 `String` 转化为可读的流对象，然后用这个对象来构造 `BufferedReader` 对象，因为我们要使用 `BufferedReader` 的 `readLine()` 方法。最终，我们可以使用 `input` 对象一次读取一行文本，就像从控制台读入标准输入一样。
 
 `readLine()` 方法将一行输入转为 `String` 对象。如果每一行数据正好对应一个输入值，那这个方法也还可行。但是，如果两个输入值在同一行中，事情就不好办了，我们必须分解这个行，才能分别解析所需的输入值。在这个例子中，分解的操作发生在创建 `numArray`时。
 

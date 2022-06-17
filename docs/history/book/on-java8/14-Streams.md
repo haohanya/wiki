@@ -1301,7 +1301,7 @@ Caught java.lang.Exception: Supplied
 
 `test()` 通过传入所有方法都适用的 **Consumer** 来避免重复代码。
 
-`orElseThrow()` 通过 **catch** 关键字来捕获抛出的异常。更多细节，将在 [异常](./15-Exceptions.md) 这一章节中学习。
+`orElseThrow()` 通过 **catch** 关键字来捕获抛出的异常。更多细节，将在 [异常](15-Exceptions.md) 这一章节中学习。
 
 <!-- Creating Optionals -->
 
