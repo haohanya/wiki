@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta charset="UTF-8">
     <title>知识库</title>
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.min.css">
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css">
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css"
+          title="Simple">
     <style>
         :root {
             /* Reduce the font size */
@@ -16,6 +17,12 @@
             /* Change the sidebar bullets */
             /*--sidebar-nav-link-before-content: 'H1';*/
         }
+
+        /* 调整 navbar 位置 */
+        .app-nav {
+            position: fixed;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -23,23 +30,32 @@
 <script>
     window.$docsify = {
         name: '知识库',
-        repo: 'https://github.com/haohanya/wiki.git',
+        repo: 'pannanxu/wiki.git',
         basePath: 'docs/',
         auto2top: true,
         noEmoji: true,
         loadNavbar: true,
-        // mergeNavbar: true,
-        // topMargin: 90,
-        // themeable: {
-        //     readyTransition : true, // default
-        //     responsiveTables: true  // default
-        // }
+        topMargin: 90,
+        themeable: {
+            readyTransition: true, // default
+            responsiveTables: true  // default
+        },
+        search: {
+            depth: 3,
+            noData: 'No results!',
+            placeholder: 'Search...'
+        }
     }
 </script>
 <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/docsify-themeable@0/dist/js/docsify-themeable.min.js"></script>
-<script src="//unpkg.com/docsify/lib/plugins/search.js"></script>
-<script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/docsify-tabs@1/dist/docsify-tabs.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/docsify-copy-code@2/dist/docsify-copy-code.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/docsify-pagination@2/dist/docsify-pagination.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/external-script.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.js"></script>
+<script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/zoom-image.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
 <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-java.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
