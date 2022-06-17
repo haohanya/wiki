@@ -128,7 +128,7 @@ kill -9 18874
 ## 查看防火墙状态
 
 ```shell
-kill -9 18874
+systemctl status firewalld.service
 ```
 
 
