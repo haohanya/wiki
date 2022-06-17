@@ -1,0 +1,7 @@
+- [MySQL安装-二进制](mysql/安装.md)
+- [日志](mysql/日志.md)
+- [备份与恢复](mysql/备份与恢复.md)
+- [用户权限](mysql/用户权限.md)
+- [information_schema](mysql/information_schema.md)
+- [性能调优](mysql/性能调优.md)
+- [其他](mysql/MySQL.md)
