@@ -155,7 +155,7 @@ private void ensureExplicitCapacity(int minCapacity) {
 }
 ```
 
-> 首先这里调用了 `modCount++;`，它的作用是标识集合修改次数，例如扩容
+> 首先这里调用了 `modCount++;`，它的作用是标识集合修改次数，例如扩容、删除等
 > 
 > 然后校验最小需要的容量 - 当前数组的长度 大于0则开始真正的扩容
 > 
@@ -177,6 +177,51 @@ private void grow(int minCapacity) {
 ```
 
 > 真正扩容的地方，扩容的数量是 `当前数组的长度的1.5倍`
+
+`remove(int index)`
+
+```java
+public E remove(int index) {
+    rangeCheck(index);
+
+    modCount++;
+    E oldValue = elementData(index);
+
+    int numMoved = size - index - 1;
+    if (numMoved > 0)
+        System.arraycopy(elementData, index+1, elementData, index,
+                         numMoved);
+    elementData[--size] = null; // clear to let GC do its work
+
+    return oldValue;
+}
+```
+
+> rangeCheck 校验是否数组越界
+> 
+> 然后找到需要删除的数据 `oldValue` 后进行数组拷贝（这里就是删除慢的原因）
+
+`get(int index)`
+
+```java
+public E get(int index) {
+    rangeCheck(index);
+
+    return elementData(index);
+}
+```
+
+> 在调用 get 方法时，是直接根据下标访问了数组的元素，这也是读取快的原因
+
+`elementData(int index)`
+
+```java
+E elementData(int index) {
+    return (E) elementData[index];
+}
+```
+
+> 直接访问数组中的一个元素
 
 # Map
 
