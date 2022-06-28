@@ -1,3 +1,4 @@
+- [首页](/)
 - 创建型模式
   - 工厂方法(FactoryMethod)
   - 抽象工厂模式(AbstractFactory)
