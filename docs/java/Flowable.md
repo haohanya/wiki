@@ -48,7 +48,7 @@ public static void main(String[] args) {
 ```
 
 > 启动之后, 就会初始化创建表
-
+> 
 > 控制数据库更新模式 是通过 `setDatabaseSchemaUpdate` 进行设置
 
 
@@ -64,7 +64,7 @@ System.out.println("流程ID：" + deployment.getId());
 ```
 
 > 执行成功之后, 我们查询 `act_re_deployment` 表, 会看到插入的流程信息
-
+> 
 > 以及 `act_ge_bytearray` 表的xml流程文件信息
 
 
@@ -88,9 +88,9 @@ System.out.println(processInstance.getName());
 ## `ACT_RE_*` 存储静态信息
 
 > `RE` 表示 `repository` (存储);
-
+> 
 > `RepositoryService` 接口操作的表
-
+> 
 > 带此前缀的表包含的是静态信息, 如: 流程定义、流程的资源(图片、规则等)
 
 
@@ -101,9 +101,9 @@ System.out.println(processInstance.getName());
 ## `ACT_RU_*` 运行时的表
 
 > `RU` 表示 runtime
-
+> 
 > 这时运行时的表, 存储着流程变量, 用户任务, 变量, 职责(job) 等运行时数据
-
+> 
 > flowable 只存储实例执行期间的运行时数据, 当流程结束后会将这些记录删除
 
 
@@ -123,7 +123,7 @@ System.out.println(processInstance.getName());
 ## `ACT_ID_*` 组织机构
 
 > `ID` 表示 identity (组织机构)
-
+> 
 > 这些表包含标识信息，如用户、用户组等
 
 
@@ -140,7 +140,7 @@ System.out.println(processInstance.getName());
 ## `ACT_HI_*` 历史的相关数据
 
 > `HI` 表示 history
-
+> 
 > 这些表包含着历史的相关数据，如结束的流程实例，变量，任务等
 
 
@@ -195,22 +195,12 @@ org.flowable.common.engine.api.FlowableException: Error initialising eventregist
 | LOCK_TIME_ | 锁定时间 | NULL | YES | timestamp | NULL |  |  |
 | IS_PROCESSED_ | 是否正在执行 | 0 | YES | tinyint | NULL |  |  |
 
-
-> 注：
-
-> 1. 事件日志表
-> 2. 事件日志， 默认不开启。
-> 3. 从Activiti 5.16开始，引入了（试验性）的事件记录机制。记录机制基于Activiti引擎的事件机制的一般用途，并默认禁用。其思想是，来源于引擎的事件会被捕获，并创建一个包含了所有事件数据（甚至更多）的映射，提供给<br />
-org.activiti.engine.impl.event.logger.EventFlusher，由它将这些数据刷入其他地方。默认情况下，使用简单的基于数据库的事件处理/刷入，会使用Jackson将上述映射序列化为JSON，并将其作为EventLogEntryEntity接口存入数据库。如果不使用事件记录，可以删除这个表。
-> 4. 配置启用事件日志：processEngineConfiguration.setEnableDatabaseEventLogging(true);
-> 5. 运行时启用事件日志：databaseEventLogger = new EventLogger(processEngineConfiguration.getClock()); runtimeService.addEventListener(databaseEventLogger);
-> 6. 可以扩展EventLogger类。如果默认的数据库记录不符合要求，需要覆盖createEventFlusher()方法返回一个org.activiti.engine.impl.event.logger.EventFlusher接口的实例。可以通过Activiti的<br />
-managementService.getEventLogEntries(startLogNr, size)?获取EventLogEntryEntity实例。<br />
-容易看出这个表中的数据可以通过JSON放入大数据NoSQL存储，例如MongoDB，Elastic Search，等等。也容易看出这里使用的类<br />
-（org.activiti.engine.impl.event.logger.EventLogger/EventFlusher与许多其他 EventHandler类）是可插入的，可以按你的使用场景调整<br />
-（例如不将JSON存入数据库，而是将其直接发送给一个队列或大数据存储）。<br />
-请注意这个事件记录机制是额外于Activiti的“传统”历史管理器的。尽管所有数据都在数据库表中，但并未对查询或快速恢复做优化。实<br />
-际使用场景是末端审计并将其存入大数据存储。
+1. 事件日志表
+2. 事件日志， 默认不开启。
+3. 从Activiti 5.16开始，引入了（试验性）的事件记录机制。记录机制基于Activiti引擎的事件机制的一般用途，并默认禁用。其思想是，来源于引擎的事件会被捕获，并创建一个包含了所有事件数据（甚至更多）的映射，提供给org.activiti.engine.impl.event.logger.EventFlusher，由它将这些数据刷入其他地方。默认情况下，使用简单的基于数据库的事件处理/刷入，会使用Jackson将上述映射序列化为JSON，并将其作为EventLogEntryEntity接口存入数据库。如果不使用事件记录，可以删除这个表。
+4. 配置启用事件日志：processEngineConfiguration.setEnableDatabaseEventLogging(true);
+5. 运行时启用事件日志：databaseEventLogger = new EventLogger(processEngineConfiguration.getClock()); runtimeService.addEventListener(databaseEventLogger);
+6. 可以扩展EventLogger类。如果默认的数据库记录不符合要求，需要覆盖createEventFlusher()方法返回一个org.activiti.engine.impl.event.logger.EventFlusher接口的实例。可以通过Activiti的 managementService.getEventLogEntries(startLogNr, size)?获取EventLogEntryEntity实例。 容易看出这个表中的数据可以通过JSON放入大数据NoSQL存储，例如MongoDB，Elastic Search，等等。也容易看出这里使用的类 （org.activiti.engine.impl.event.logger.EventLogger/EventFlusher与许多其他 EventHandler类）是可插入的，可以按你的使用场景调整 （例如不将JSON存入数据库，而是将其直接发送给一个队列或大数据存储）。 请注意这个事件记录机制是额外于Activiti的“传统”历史管理器的。尽管所有数据都在数据库表中，但并未对查询或快速恢复做优化。实 际使用场景是末端审计并将其存入大数据存储。
 
 
 
@@ -225,17 +215,9 @@ managementService.getEventLogEntries(startLogNr, size)?获取EventLogEntryEntity
 | GENERATED_ | 是否系统生成 | NULL | YES | tinyint | NULL |  | 0为用户上传， 1为系统自动生 成， 比如系统会 自动根据xml生 成png |
 
 
-> 注：
-
-> 1. 
-用来保存部署文件的大文本数据
-
-> 2. 
-所有二进制内容都会保存在这个表里， 比如部署的process.bpmn20.xml, process.png, user.form, 附件， bean序列<br />
-化为二进制的流程变量。
-
-> 3. 
-act_ge_property属性数据表存储整个流程引擎级别的数据,初始化表结构时，会默认插入三条记录。
+1. 用来保存部署文件的大文本数据
+2. 所有二进制内容都会保存在这个表里， 比如部署的process.bpmn20.xml, process.png, user.form, 附件， bean序列化为二进制的流程变量。
+3. act_ge_property属性数据表存储整个流程引擎级别的数据,初始化表结构时，会默认插入三条记录。
 
 
 
@@ -247,15 +229,8 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | VALUE_ | 值 | NULL | YES | varchar | 300 |  | 5._ create(5._) |
 | REV_ | 版本号 | NULL | YES | int | NULL |  | version |
 
-
-> 注：
-
-> 1. 
-全局参数， 默认三个参数next.dbid， IdGenerator区间， schema.history， 自动执行sql历史， schema.version， 当<br />
-前sql版本。
-
-> 2. 
-属性数据表。存储整个流程引擎级别的数据。
+1. 全局参数， 默认三个参数next.dbid， IdGenerator区间， schema.history， 自动执行sql历史， schema.version， 当前sql版本。
+2. 属性数据表。存储整个流程引擎级别的数据。
 
 
 
@@ -278,9 +253,8 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | TENANT_ID_ | 多租户 |  | YES | varchar | 255 |  |  |
 
 
-> 注：<br />
-1.　历史活动信息。这里记录流程流转过的所有节点，与HI_TASKINST不同的是，taskinst只记录usertask内容。<br />
-2.　TENANT_ID 是后续才加入的多租户
+1. 历史活动信息。这里记录流程流转过的所有节点，与HI_TASKINST不同的是，taskinst只记录usertask内容。
+2. TENANT_ID 是后续才加入的多租户
 
 
 ## act_hi_attachment（历史附件表）
@@ -298,14 +272,8 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | CONTENT_ID_ | 字节表ID | NULL | YES | varchar | 64 |  | ACT_GE_BYTEARRAY的ID |
 | TIME_ | 时间 | NULL | YES | datetime | NULL |  |  |
 
-
-> 注：
-
-> 1. 
-存放历史流程相关的附件。
-
-> 2. 
-时间是后续版本加入
+1. 存放历史流程相关的附件。
+2. 时间是后续版本加入
 
 
 
@@ -324,10 +292,8 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | FULL_MSG_ | 全部内容 | NULL | YES | longblob | 4294967295 |  | 附件 |
 
 
-> 注：
-
-> 1. 存放历史流程的审批意见。
-> 2. 行为类型。值为下列内容中的一种：AddUserLink、DeleteUserLink、AddGroupLink、DeleteGroupLink、AddComment、AddAttachment、DeleteAttachment
+1. 存放历史流程的审批意见。
+2. 行为类型。值为下列内容中的一种：AddUserLink、DeleteUserLink、AddGroupLink、DeleteGroupLink、AddComment、AddAttachment、DeleteAttachment
 
 
 
@@ -351,10 +317,8 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | TEXT2_ | 字符串 | NULL | YES | varchar | 4000 |  | 此处存储的是JPA持久化对象时，才会有值。此值为对象ID jpa变量text存className,text2存id |
 
 
-> 注：
-
-> 1. 历史详情表：流程中产生的变量详细，包括控制流程流转的变量，业务表单中填写的流程需要用到的变量等。
-> 2. 参数类型：  jpa-entity、boolean、bytes、serializable(可序列化)、自定义type(根据你自身配置)、CustomVariableType、date、double、integer、long、null、short、string
+1. 历史详情表：流程中产生的变量详细，包括控制流程流转的变量，业务表单中填写的流程需要用到的变量等。
+2. 参数类型：  jpa-entity、boolean、bytes、serializable(可序列化)、自定义type(根据你自身配置)、CustomVariableType、date、double、integer、long、null、short、string
 
 
 
@@ -368,10 +332,7 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | TASK_ID_ | 任务ID | NULL | YES | varchar | 64 | MUL |  |
 | PROC_INST_ID_ | 流程实例ID | NULL | YES | varchar | 64 | MUL |  |
 
-
-> 注：
-
-> 1. 任务参与者数据表。主要存储当前节点参与者的信息。
+1. 任务参与者数据表。主要存储当前节点参与者的信息。
 
 
 
@@ -394,11 +355,9 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | NAME_ | 名称 | NULL | YES | varchar | 255 |  |  |
 
 
-> 注：
-
-> 1. 核心表之一。
-> 2. 存放历史的流程实例。
-> 3. 设计历史流程实例表的初衷之一就是为了使得运行时库数据量尽可能小，效率最优。
+1. 核心表之一。
+2. 存放历史的流程实例。
+3. 设计历史流程实例表的初衷之一就是为了使得运行时库数据量尽可能小，效率最优。
 
 
 
@@ -427,10 +386,9 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | TENANT_ID_ | 租户ID |  | YES | varchar | 255 |  |  |
 
 
-> 注：<br />
-1.　历史任务实例表。<br />
-2.　存放已经办理的任务。<br />
-3.　CATEGORY和TNANT_ID是后续版本才加进来的。
+1. 历史任务实例表。
+2. 存放已经办理的任务。
+3. CATEGORY和TNANT_ID是后续版本才加进来的。
 
 
 ## act_hi_varinst（历史变量表）
@@ -452,9 +410,7 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | LAST_UPDATED_TIME_ | 最后更新时间 | NULL | YES | datetime | NULL |  |  |
 
 
-> 注：
-
-> 1. 主要存放历史变量数据。
+1. 主要存放历史变量数据。
 
 
 
@@ -466,10 +422,7 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | NAME_ | 名称 | NULL | YES | varchar | 255 |  |  |
 | TYPE_ | 类型 | NULL | YES | varchar | 255 |  |  |
 
-
-> 注：
-
-> 1. Activiti自带的用户组表，用于组任务。
+1. Activiti自带的用户组表，用于组任务。
 
 
 
@@ -481,10 +434,7 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | REV_ | 版本号 | NULL | YES | int | NULL |  | version |
 | INFO_JSON_ID_ | 内容 | NULL | YES | varchar | 64 | MUL（ACT_GE_BYTEARRAY） |  |
 
-
-> 注：
-
-> 1. 流程版本升级的数据。
+1. 流程版本升级的数据。
 
 
 
@@ -497,10 +447,7 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | TENANT_ID_ | 租户ID |  | YES | varchar | 255 |  |  |
 | DEPLOY_TIME_ | 部署时间 | NULL | YES | timestamp | NULL |  |  |
 
-
-> 注：
-
-> 1.　部署流程定义时需要被持久化保存下来的信息。
+1.　部署流程定义时需要被持久化保存下来的信息。
 
 
 ## act_re_model (流程设计模型部署表)
@@ -520,10 +467,7 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | EDITOR_SOURCE_EXTRA_VALUE_ID_ | 二进制文件ID | NULL | YES | varchar | 64 | MUL（ACT_GE_BYTEARRAY） | 设计器扩展信息 |
 | TENANT_ID_ | 租户ID |  | YES | varchar | 255 |  |  |
 
-
-> 注：
-
-> 1. 该表是流程设计器设计流程模型保存的数据。
+1. 该表是流程设计器设计流程模型保存的数据。
 
 
 
@@ -545,10 +489,7 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | SUSPENSION_STATE_ | 挂起状态 | NULL | YES | int | NULL |  | 暂停状态 1激活 2暂停 |
 | TENANT_ID_ | 租户ID |  | YES | varchar | 255 |  |  |
 
-
-> 注：
-
-> 业务流程定义数据表。此表和ACT_RE_DEPLOYMENT是多对一的关系，即，一个部署的bar包里可能包含多个流程定义文件，每个流程定义文件都会有一条记录在ACT_REPROCDEF表内，每个流程定义的数据，都会对于ACT_GE_BYTEARRAY表内的一个资源文件和PNG图片文件。和ACT_GE_BYTEARRAY的关联是通过程序用ACT_GE_BYTEARRAY.NAME与ACT_RE_PROCDEF.NAME_完成的，在数据库表结构中没有体现。
+业务流程定义数据表。此表和ACT_RE_DEPLOYMENT是多对一的关系，即，一个部署的bar包里可能包含多个流程定义文件，每个流程定义文件都会有一条记录在ACT_REPROCDEF表内，每个流程定义的数据，都会对于ACT_GE_BYTEARRAY表内的一个资源文件和PNG图片文件。和ACT_GE_BYTEARRAY的关联是通过程序用ACT_GE_BYTEARRAY.NAME与ACT_RE_PROCDEF.NAME_完成的，在数据库表结构中没有体现。
 
 
 ## act_ru_event_subscr（事件订阅）
@@ -566,10 +507,7 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | PROC_DEF_ID_ | 流程定义ID | NULL | YES | varchar | 64 |  |  |
 | TENANT_ID_ | 租户ID |  | YES | varchar | 255 |  |  |
 
-
-> 注：
-
-> 1. 该表是后续版本加进来的。
+1. 该表是后续版本加进来的。
 
 
 
@@ -594,10 +532,7 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | NAME_ | 名称 | NULL | YES | varchar | 255 |  |  |
 | LOCK_TIME_ | 锁定时间 | NULL | YES | timestamp | NULL |  |  |
 
-
-> 注：
-
-> 1. TENANT_ID、NAME、LOCK_TIME是后续版本加入的。
+1. TENANT_ID、NAME、LOCK_TIME是后续版本加入的。
 
 
 
@@ -613,10 +548,7 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | PROC_INST_ID_ | 流程实例ID | NULL | YES | varchar | 64 | MUL（ACT_RU_EXECUTION） |  |
 | PROC_DEF_ID_ | 流程定义ID | NULL | YES | varchar | 64 | MUL(ACT_RE_PROCDEF) |  |
 
-
-> 注：
-
-> 1. 任务参与者数据表。主要存储当前节点参与者的信息。
+1. 任务参与者数据表。主要存储当前节点参与者的信息。
 
 
 
@@ -642,22 +574,9 @@ act_ge_property属性数据表存储整个流程引擎级别的数据,初始化�
 | TENANT_ID_ | 租户ID |  | YES | varchar | 255 |  |  |
 
 
-> 注：
-
-> 1. 作业执行器数据。
-> 2. 需要启用JOB组件：JobExecutor 是管理一组线程的组件，这些线程用于触发定时器（包括后续的异步消息）。在单元测试场景下，使用多线程会很笨重。<br />
-因此API提供 ManagementService.createJobQuery 用于查询，以及 ManagementService.executeJob 用于执行作业。这样作业的执<br />
-行就可以在单元测试内部控制。为了避免作业执行器的干扰，可以将它关闭。<br />
-默认情况下， JobExecutor 在流程引擎启动时激活。当你不希望 JobExecutor 随流程引擎启动时，设置：<br />
-`<property name="jobExecutorActivate" value="false" />`
-> 3. 启用异步执行器 Async executor activation<br />
-AsyncExecutor 是管理线程池的组件，这个线程池用于触发定时器与异步任务。<br />
-默认情况下，由于历史原因，当使用 JobExecutor 时， AsyncExecutor 不生效。然而我们建议使用新的 AsyncExecutor 代替<br />
-JobExecutor ，通过定义两个参数实现<br />
-`<property name="asyncExecutorEnabled" value="true" />`<br />
-`<property name="asyncExecutorActivate" value="true" />`<br />
-asyncExecutorEnabled参数用于启用异步执行器，代替老的作业执行器。 第二个参数asyncExecutorActivate命令Activiti引擎在启动时<br />
-启动异步执行器线程池。
+1. 作业执行器数据。
+2. 需要启用JOB组件：JobExecutor 是管理一组线程的组件，这些线程用于触发定时器（包括后续的异步消息）。在单元测试场景下，使用多线程会很笨重。因此API提供 ManagementService.createJobQuery 用于查询，以及 ManagementService.executeJob 用于执行作业。这样作业的执行就可以在单元测试内部控制。为了避免作业执行器的干扰，可以将它关闭。默认情况下， JobExecutor 在流程引擎启动时激活。当你不希望 JobExecutor 随流程引擎启动时，设置：`<property name="jobExecutorActivate" value="false" />`
+3. 启用异步执行器 Async executor activation AsyncExecutor 是管理线程池的组件，这个线程池用于触发定时器与异步任务。 默认情况下，由于历史原因，当使用 JobExecutor 时， AsyncExecutor 不生效。然而我们建议使用新的 AsyncExecutor 代替 JobExecutor ，通过定义两个参数实现`<property name="asyncExecutorEnabled" value="true" />``<property name="asyncExecutorActivate" value="true" />`asyncExecutorEnabled参数用于启用异步执行器，代替老的作业执行器。 第二个参数asyncExecutorActivate命令Activiti引擎在启动时 启动异步执行器线程池。
 
 
 
@@ -684,10 +603,7 @@ asyncExecutorEnabled参数用于启用异步执行器，代替老的作业执行
 | TENANT_ID_ | 租户ID |  | YES | varchar | 255 |  |  |
 | FORM_KEY_ | 表单标识 | NULL | YES | varchar | 255 |  |  |
 
-
-> 注：
-
-> 1. 运行时任务数据表
+1. 运行时任务数据表
 
 
 
@@ -708,10 +624,8 @@ asyncExecutorEnabled参数用于启用异步执行器，代替老的作业执行
 | TEXT2_ | 文本值 | NULL | YES | varchar | 4000 |  | 此处存储的是JPA持久化对象时，才会有值。此值为对象ID |
 
 
-> 注：
-
-> 1. 运行时流程变量数据表。
-> 2. 类型：jpa-entity、boolean、bytes、serializable(可序列化)、自定义type(根据你自身配置)、
+1. 运行时流程变量数据表。
+2. 类型：jpa-entity、boolean、bytes、serializable(可序列化)、自定义type(根据你自身配置)、
 
 > CustomVariableType、date、double、integer、long、null、short、string
 
