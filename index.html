@@ -17,12 +17,6 @@
             /* Change the sidebar bullets */
             /*--sidebar-nav-link-before-content: 'H1';*/
         }
-
-        /* 调整 navbar 位置 */
-        .app-nav {
-            position: fixed;
-            text-align: left;
-        }
     </style>
 </head>
 <body>
@@ -34,17 +28,13 @@
         basePath: 'docs/',
         auto2top: true,
         noEmoji: true,
-        loadNavbar: true,
         topMargin: 90,
-        themeable: {
-            readyTransition: true, // default
-            responsiveTables: true  // default
-        },
-        search: {
-            depth: 3,
-            noData: 'No results!',
-            placeholder: 'Search...'
-        }
+
+        subMaxLevel: 6,
+        loadSidebar: true,
+        autoHeader: true,
+        // 启用相对路径
+        relativePath: true,
     }
 </script>
 <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
