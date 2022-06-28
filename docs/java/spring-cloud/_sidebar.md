@@ -1,3 +1,4 @@
+* [首页](/)
 * [SpringCloud](InitSpringCloud.md)
 * [Eureka](Eureka.md)
 * [Hystrix](Hystrix.md)
