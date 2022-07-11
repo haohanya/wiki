@@ -5,3 +5,4 @@
 * [设计模式](设计模式/README.md)
 * [Devops](devops/Git.md)
 * [前端](web/ViteJs.md)
+* [微信开发](wechat/mp-start.md)
