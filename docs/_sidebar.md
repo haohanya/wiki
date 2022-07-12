@@ -6,4 +6,4 @@
 * [Devops](devops/Git.md)
 * [前端](web/ViteJs.md)
 * [微信开发](wechat/mp-start.md)
-* [书籍](history/book/on-java8/OnJava8.md)
+* [书籍](books/_sidebar.md)
