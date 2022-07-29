@@ -69,13 +69,11 @@ git branch -u origin/master
 
 > 和远程分支同步, 若和远程分支偏离, 执行合并以完成更新
 
-
 ```shell
 git pull
 ```
 
 > 和远程分支同步, 若和远程分支偏离, 将本地差异提交变基到远程分支, 以完成更新
-
 
 ```shell
 git pull --rebase
@@ -146,6 +144,8 @@ git stash pop 'stash@{0}'
 
 [//]: # (TODO)
 [//]: # (TODO A)
+
+[//]: # (Master TODO)
 
 # pull
 
