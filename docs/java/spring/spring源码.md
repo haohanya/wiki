@@ -150,3 +150,69 @@ hello: io.mvvm.MyBean@14ec4505
 执行以下步骤重启后重新 build 项目即可
 
 ![img.png](images/change-windows-unicode-utf-8.png)
+
+# ClassPathXmlApplicationContext
+
+基于 XML 实现的 Spring 上下文
+
+## refresh()
+
+### prepareRefresh()
+
+刷新上下文的准备工作，并初始化了上下文环境
+
+### obtainFreshBeanFactory()
+
+将旧的BeanFactory销毁后，创建新的BeanFactory；然后加载 BeanDefinition (从xml、注解等地方)
+
+默认创建了一个 `DefaultListableBeanFactory` 
+
+### prepareBeanFactory(beanFactory)
+
+给 `BeanFactory` 初始化一些默认值
+
+### postProcessBeanFactory(beanFactory)
+
+`BeanFactory` 的后置处理器，在xml中是一个空方法，给子类实现
+
+### invokeBeanFactoryPostProcessors(beanFactory)
+
+执行BeanFactory的后置处理器 
+
+- BeanDefinitionRegistryPostProcessor
+- BeanFactoryPostProcessor
+
+### registerBeanPostProcessors(beanFactory)
+
+注册 Bean后置处理器
+
+- BeanPostProcessor
+
+
+### initMessageSource()
+
+初始化国际化相关
+
+### initApplicationEventMulticaster()
+
+初始化事件广播器
+
+`ApplicationListener` 的一些实现类都会注册进这里
+
+### onRefresh()
+
+执行刷新，一个空的方法
+
+### registerListeners()
+
+注册事件(`ApplicationListener`) 到事件广播器中
+
+### finishBeanFactoryInitialization(beanFactory)
+
+初始化单例Bean
+
+### finishRefresh()
+
+完成上下文刷新
+
+发布生命周期处理器(`LifecycleProcessor`)和 `ContextRefreshedEvent` 事件
