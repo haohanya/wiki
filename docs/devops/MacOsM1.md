@@ -29,3 +29,25 @@ docker buildx build --platform linux/arm64 --load -t tfl-back:v1 .
 ```text
 azul/zulu-openjdk-alpine:17.0.4-17.36.15-arm64
 ```
+
+
+## arm Dockerfile
+
+```dockerfile
+FROM azul/zulu-openjdk-alpine:17.0.4-17.36.15-arm64
+
+WORKDIR application
+
+EXPOSE 8081
+
+ARG JAR_FILE=application.jar
+COPY ${JAR_FILE} application.jar
+
+ENV JVM_OPTS="" \
+    TZ=Asia/Shanghai
+
+RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone
+
+ENTRYPOINT java ${JVM_OPTS} -jar application.jar -Djava.security.egd=file:/dev/./urandom
+```
