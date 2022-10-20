@@ -6,4 +6,5 @@
 * [Devops](devops/Git.md)
 * [前端](web/ViteJs.md)
 * [微信开发](wechat/mp-start.md)
+* [SwiftUI For MacOS](swiftui_for_macos.md)
 * [书籍](books/_sidebar.md)
