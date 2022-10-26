@@ -142,6 +142,20 @@ git stash pop 'stash@{0}'
 >
 > 当再次切换回 dev 分支时，我们可以使用 `stash pop` 恢复暂存区的代码
 
+# reset
+
+撤销上一次 commit 但保留工作空间已修改代码
+
+```shell
+git reset --mixed HEAD^ --
+```
+
+- `HEAD^` 撤销上一次 commit 的代码
+- `HEAD~3` 撤销最近三次 commit 的代码
+- `--mixed` 不删除工作空间代码、撤销 commit、撤销 git add
+- `--soft` 不删除工作空间代码、撤销 commit、不撤销 git add
+- `--hard` 删除工作空间代码、撤销 commit、撤销 git add
+
 # pull
 
 ## 将远程(origin)指定分支 拉取到 本地指定分支
