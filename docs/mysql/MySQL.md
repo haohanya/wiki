@@ -33,6 +33,13 @@ select @@sql_mode;
 # 2、备份此值
 # 3、去掉ONLY_FULL_GROUP_BY后的值
 SET GLOBAL sql_mode='去掉ONLY_FULL_GROUP_BY后的值';
+
+# 或者一键执行
+SET SESSION sql_mode = (SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY,', ''));
+
+# 或者修改配置文件
+[mysqld]
+sql_mode=
 ```
 
 # 乐观锁
