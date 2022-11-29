@@ -110,6 +110,22 @@ git merge dev master
 git fetch origin(源) 分支名称
 ```
 
+##  标签
+
+```shell
+# 创建一个 v1.0 的标签，说明是：版本 1.0
+git tag -a v1.0 -m '版本 1.0'
+# 列出tag列表
+git tag
+# 匹配出 以 v1. 开头的标签
+git tag -l 'v1.*'
+# 查看标签的信息
+git show v1.0
+# 推送标签到服务器中 git push origin --tags推送所有标签
+git push origin v1.0
+```
+
+
 # 代码合并(merge) & 变基(rebase)
 
 # Stash
@@ -195,6 +211,13 @@ git push origin <本地分支名>
 ```shell
 git push
 ```
+
+# 工作流
+
+- 集中式工作流：开发者直接在本地 master 分支开发代码，开发完成后 push 到远端仓库 master 分支。  
+- 功能分支工作流：开发者基于 master 分支创建一个新分支，在新分支进行开发，开发完成后合并到远端仓库 master 分支。  
+- Git Flow 工作流：Git Flow 工作流为不同的分支分配一个明确的角色，并定义分支之间什么时候、如何进行交互，比较适合大型项目的开发。  
+- Forking 工作流：开发者先 fork 项目到个人仓库，在个人仓库完成开发后，提交 pull request 到目标远程仓库，远程仓库 review 后，合并 pull request 到 master 分支
 
 # .gitignore
 
