@@ -5,6 +5,7 @@
 - [设计模式](设计模式.md)
 - [DevOps](DevOps.md)
 - [ApiDesign](https://cloud.google.com/apis/design)
+- [奥密克戎治疗方案](奥密克戎治疗方案.md)
 
 [//]: # (# 后端)
 

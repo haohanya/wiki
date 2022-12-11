@@ -179,6 +179,11 @@ JAVA_HOME=/usr/java/jdk1.8.0_11
 JRE_HOME=${JAVA_HOME}/jre
 CLASSPATH=.:${JAVA_HOME}/lib:${JAVA_HOME}/lib
 PATH=${JAVA_HOME}/bin:$PATH
+
+-- jre
+JRE_HOME=/usr/local/jre1.8.0_351
+CLASSPATH=.:${JRE_HOME}/lib/rt.jar:${JRE_HOME}/lib/ext
+PATH=${JRE_HOME}/bin:$PATH
 ```
 
 ```shell
