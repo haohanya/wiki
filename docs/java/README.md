@@ -4,30 +4,39 @@
 
 ```shell
 # 编辑配置文件
-> vim ~/.bash_profile
+> vim ~/.zshrc
 
 # 编辑内容
-export JAVA_USE_HOME="/Users/xxxuser/usejdk/Contents/Home"
+export JAVA_USE_HOME="~/usejdk/Contents/Home"
 export JAVA_HOME=$JAVA_USE_HOME
-
 export PATH=$JAVA_HOME/bin:$PATH
 export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+alias jdk="~/useJdk.sh"
 # 编辑内容 end
 
 # 刷新配置
-> source ~/.bash_profile
+> source ~/.zshrc
 ```
 
-- `JAVA_USE_HOME` 此路径是存放软链接的路径，可以自定义
+- `JAVA_USE_HOME` 此路径是存放软链接的路径，`usejdk` 可以自定义，后续使用时保持一致即可
+- `alias jdk` 的值是后续存储的脚本，可以自定义位置和名称
 
 
 ## 2、存放脚本`useJdk.sh`
 
 ```shell
-#!/bin/bash  
-echo "use zulu-$1.jdk"  
-ln -snf "/Library/Java/JavaVirtualMachines/zulu-$1.jdk/" ~/usejdk
-java -version
+#!/bin/bash
+
+# JDK 版本, 如果没有此参数则打印出所有的jdk版本列表
+jdkVersion=$1
+
+if [ -n "$jdkVersion" ]
+then
+    ln -snf "/Library/Java/JavaVirtualMachines/zulu-$jdkVersion.jdk/" ~/usejdk
+    java -version
+else
+    ls /Library/Java/JavaVirtualMachines
+fi
 ```
 
 > `/Library/Java/JavaVirtualMachines/zulu-$1.jdk/` 是我jdk安装路径
@@ -36,7 +45,7 @@ java -version
 > 
 > 所以我可以直接通过一个参数传进来版本
 
-- `ln -snf` 是将jdk软链接到 usejdk 路径
+- `ln -snf` 是将jdk软链接到 `~/usejdk` 路径
 
 ## 3、赋予脚本执行权限
 
@@ -47,12 +56,10 @@ chmod +x ./useJdk.sh
 ## 4、切换jdk
 
 ```shell
-./useJdk.sh 8
-java -version
-
-./useJdk.sh 11
-java -version
-
-./useJdk.sh 17
-java -version
+# 查看jdk列表
+jdk
+# 切换jdk
+jdk 8
+jdk 11
+jdk 17
 ```

@@ -8,4 +8,4 @@
 * [微信开发](wechat/mp-start.md)
 * [SwiftUI For MacOS](swiftui_for_macos.md)
 * [书籍](books/_sidebar.md)
-- [奥密克戎治疗方案](奥密克戎治疗方案.md)
+* [年终 & 未来](年终&未来/_sidebar.md)
