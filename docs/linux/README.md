@@ -100,6 +100,41 @@ find . -name *.log
 find . ! -name *.log
 ```
 
+## 权限
+
+- `chown`（change owner）修改所属用户与组
+	- `chown [-R] 用户名 文件名` 
+	- `chown [-R] 用户名:用户组 文件名`
+- `chmod`（change mode）修改用户权限
+	- `chmod [-R] xyz 文件或目录`
+- `chgrp` 修改文件用户组
+	- `chgrp [-R] 组名 文件名` 
+
+`-R` 表示递归修改子目录所有的文件
+
+
+## 磁盘
+
+### df：列出文件系统的整体磁盘使用量
+
+```shell
+df -h
+```
+
+- `df [-ahikHTm] [目录或文件名]`
+	- `-a` 列出所有的文件系统
+	- `-k` 以 `kbytes` 的容量显示
+	- `-m` 以 `mbytes` 的容量显示
+	- `-h` 以人们较易阅读的 GBytes, MBytes, KBytes 等格式自行显示
+
+###  du：检查磁盘空间使用量（disk used）
+
+
+### fdisk：磁盘分区
+
+- `fdisk [-l] 装置名称`
+	- `-l` ：输出后面接的装置所有的分区内容。若仅有 fdisk -l 时， 则系统将会把整个系统内能够搜寻到的装置的分区均列出来。
+
 # 管理进程
 
 
@@ -157,6 +192,12 @@ firewall-cmd --query-port=端口号/tcp
 
 ```shell
 firewall-cmd --zone=public --add-port=端口号/tcp --permanent
+```
+
+## 删除指定端口
+
+```shell
+firewall-cmd --zone=public --remove-port=80/tcp --permanent
 ```
 
 ## 重新载入配置

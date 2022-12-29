@@ -6,7 +6,8 @@
 yum -y install gcc gcc-c++ automake pcre pcre-devel zlib zlib-devel openssl openssl-devel
 wget http://nginx.org/download/nginx-1.16.1.tar.gz
 tar -zxvf nginx-1.16.1.tar.gz
-cd nginx-1.16.1
+ln -s nginx-1.16.1 nginx
+cd nginx
 ./configure --prefix=/usr/local/nginx --with-http_realip_module --with-http_ssl_module
 make && make install
 ```
