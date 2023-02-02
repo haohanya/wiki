@@ -1,7 +1,0 @@
-- [首页](/)
-- [Linux](README.md)
-- [Shell](Shell.md)
-- [Nginx](Nginx.md)
-- [Caddy](Caddy.md)
-- [Vim](Vim.md)
-- [Redis](Redis.md)

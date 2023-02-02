@@ -38,7 +38,7 @@ public class HungerSingleton {
 - 
 ## 类图
 
-![单例设计模式类图.png](images/单例设计模式类图.png)
+![单例设计模式类图.png](单例设计模式类图.png)
 
 ## 示例代码
 

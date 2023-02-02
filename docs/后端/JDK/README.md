@@ -1,6 +1,6 @@
 # Collection
 
-![Collection_UML](image/Collection_UML.png)
+![Collection_UML](Collection_UML.png)
 
 `Collection` 用来存储独立的元素, 其中包括 `List`、`Set` 和 `Queue`; 
 
@@ -18,7 +18,7 @@
 
 `List` 接口常用的实现类如下
 
-![List_UML](image/List_UML.png)
+![List_UML](List_UML.png)
 
 ### ArrayList
 
@@ -225,6 +225,6 @@ E elementData(int index) {
 
 # Map
 
-![Map_UML](image/Map_UML.png)
+![Map_UML](Map_UML.png)
 
 用于存储 `<键, 值>` 对，这个容器允许通过键来查找值 

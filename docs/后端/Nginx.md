@@ -12,6 +12,25 @@ cd nginx
 make && make install
 ```
 
+
+### Debian
+
+```shell
+sudo wget https://nginx.org/keys/nginx_signing.key
+sudo apt-key add nginx_signing.key
+
+sudo vim /etc/apt/sources.list
+> deb http://nginx.org/packages/mainline/debian/ bullseye nginx
+> deb-src http://nginx.org/packages/mainline/debian/ bullseye nginx
+
+sudo apt update
+sudo apt install nginx
+
+sudo nginx -v
+
+cat /etc/nginx/nginx.conf
+```
+
 ## 常用命令
 
 ```shell
@@ -45,7 +64,7 @@ include /etc/nginx/conf.d/*.conf;
 ```conf
 server {
     listen                  443 ssl http2;
-    listen                  [::]:443 ssl http2;
+    listen                  [::]:443 ssl ipv6only=on http2;
     server_name             www.example.com;
     root                    /var/www/example.com/public;
 
@@ -62,7 +81,8 @@ server {
     add_header Referrer-Policy           "no-referrer-when-downgrade" always;
     add_header Content-Security-Policy   "default-src 'self' http: https: ws: wss: data: blob: 'unsafe-inline'; frame-ancestors 'self';" always;
     add_header Permissions-Policy        "interest-cohort=()" always;
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    # HSTS
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" preload;
 
     # . files
     location ~ /\.(?!well-known) {

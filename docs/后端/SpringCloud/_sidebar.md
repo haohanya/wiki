@@ -1,5 +1,5 @@
 * [首页](/)
-* [SpringCloud](InitSpringCloud.md)
+* [SpringCloud](README.md)
 * [Eureka](Eureka.md)
 * [Hystrix](Hystrix.md)
 * [Ribbon](Ribbon.md)

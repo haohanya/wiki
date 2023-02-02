@@ -6,7 +6,7 @@
 
 - 工厂方法(FactoryMethod)
 - 抽象工厂模式(AbstractFactory)                 
-- [单例模式(Singleton)](设计模式/Singleton.md)    
+- [单例模式(Singleton)](Singleton.md)    
 - 建造者模式(Builder)                          
 - 原型模式(Prototype)
 
@@ -28,7 +28,7 @@
 > 
 > 即描述多个类或对象之间如何相互协作共同完成单个对象无法独立完成的任务
 
-- [策略模式(Strategy)](设计模式/Strategy.md)
+- [策略模式(Strategy)](Strategy.md)
 - 模板方法模式(Template Method)         
 - 观察者模式(Observer)                 
 - 迭代器模式(Iterator)                 

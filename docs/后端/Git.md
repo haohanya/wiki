@@ -128,6 +128,20 @@ git push origin v1.0
 
 # 代码合并(merge) & 变基(rebase)
 
+
+
+## 合并 pr
+
+
+```shell
+# 添加提交 pr 的仓库地址
+git remote add guqing https://github.com/guqing/halo.git
+# 加载仓库信息
+git fetch guqing
+# 合并指定分支
+git cherry-pick  <commitId>
+```
+
 # Stash
 
 Stash 将已修改的代码放入暂存区
