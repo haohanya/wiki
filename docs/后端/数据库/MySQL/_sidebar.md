@@ -1,8 +1,0 @@
-- [首页](/)
-- [MySQL安装-二进制](docs/后端/数据库/MySQL/安装.md)
-- [日志](日志.md)
-- [备份与恢复](备份与恢复.md)
-- [用户权限](用户权限.md)
-- [information_schema](information_schema.md)
-- [性能调优](性能调优.md)
-- [其他](MySQL.md)
