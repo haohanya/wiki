@@ -1,4 +1,10 @@
-# Caddy
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## 安装
+
+<Tabs groupId='system'>
+  <TabItem value="centos" label="CentOS" default>
 
 https://caddy2.dengxiaolong.com/docs/install#fedora-redhat-centos
 
@@ -6,10 +12,33 @@ https://caddy2.dengxiaolong.com/docs/install#fedora-redhat-centos
 yum install yum-plugin-copr
 yum copr enable @caddy/caddy
 yum install caddy
-\
+```
+  </TabItem>
+  <TabItem value="Debain" label="Debian、Ubuntu、Raspbian">
 
-caddy version
+https://caddy2.dengxiaolong.com/docs/install#debian-ubuntu-raspbian
 
+```shell
+sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+sudo apt update
+sudo apt install caddy
+```
+  </TabItem>
+</Tabs>
+
+:::note
+安装完成后使用 `caddy version` 检查是否安装成功
+:::
+
+## 启动
+
+
+<Tabs groupId='system'>
+  <TabItem value="centos" label="CentOS" default>
+
+```shell
 # 后台允许：caddy start --config /etc/caddy/Caddyfile
 # 守护进程：caddy run --config /etc/caddy/Caddyfile
 
@@ -28,32 +57,51 @@ systemctl status caddy
 systemctl reload caddy
 systemctl restart caddy
 ```
+  </TabItem>
+  <TabItem value="Debain" label="Debian、Ubuntu、Raspbian">
 
-```Caddyfile
-sk.biomedical-wh.com {  
+```shell
+# 前台运行
+caddy run
+# 后台运行
+caddy start
+# 停止运行
+caddy stop
+```
+  </TabItem>
+</Tabs>
 
-        handle /mini-apis/* {  
-          reverse_proxy /mini-apis/* localhost:8081  
-        }  
-        
-        handle /app-apis/* {  
-          reverse_proxy /app-apis/* localhost:8082  
-        }  
-  
-        handle /admin-apis/* {  
-          reverse_proxy /admin-apis/* localhost:8080  
-        }  
-        
-        root * /usr/local/jar/wwwroot  
-          reverse_proxy /admin-apis/* localhost:8080  
-          reverse_proxy /mini-apis/* localhost:8081  
-          reverse_proxy /app-apis/* localhost:8082  
-        file_server browse  
-        
+## 配置
+
+### 重载配置
+
+```shell
+caddy reload --config /etc/caddy/Caddyfile
+```
+
+### 修改配置文件
+
+```shell
+vim /etc/caddy/Caddyfile
+```
+
+```conf
+ex.am.com {
+        handle /* {
+                reverse_proxy /* localhost:8090
+        }
+        file_server
 }
 ```
 
-如果不生效则使用 fmt 命令格式化后覆盖
+:::tip
+
+如果不生效则使用 fmt 命令格式化, 然后将得到的内容重新覆盖进文件中
+
+```shell
+caddy fmt /etc/caddy/Caddyfile
+```
+:::
 
 ```
 (common_headers) {
@@ -66,7 +114,7 @@ sk.biomedical-wh.com {
 }
 
 
-http://sk.biomedical-wh.com, sk.biomedical-wh.com {
+sk.xx.com {
 	import common_headers
         handle /mini-apis/* {
                 reverse_proxy /mini-apis/* localhost:8081
