@@ -1,3 +1,6 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Git
 
 ## 基操
@@ -280,4 +283,162 @@ build/
 .vscode/
 
 #### 其他 ####
+```
+
+
+# SSH 配置
+
+:::tip
+Linux、Mac 请直接使用终端运行命令
+
+Windows 需要在 WSL（需要 windows10 或以上）或 Git Bash下使用以下命令
+:::
+
+## 生成
+
+算法类型：
+
+- ED25519 （推荐）：公钥：id_ed25519.pub；私钥：id_ed25519
+- RSA （不推荐）：公钥：id_rsa.pub；私钥：id_rsa
+
+### 1、查看已存在的 SSH 密钥
+
+<Tabs groupId='gen-ssh-algorithm'>
+  <TabItem value="ED25519" label="ED25519 算法" default>
+
+```shell
+cat ~/.ssh/id_ed25519.pub
+```
+  </TabItem>
+  <TabItem value="RSA" label="RSA 算法">
+
+```shell
+cat ~/.ssh/id_rsa.pub
+```
+  </TabItem>
+</Tabs>
+
+:::caution
+如果返回一长串以 ssh-ed25519 或 ssh-rsa 开头的字符串, 说明已存在本地公钥，你可以跳过步骤二生成 SSH 密钥，直接操作步骤三。
+:::
+
+### 2、生成 SSH 密钥
+
+<Tabs groupId='gen-ssh-algorithm'>
+  <TabItem value="ED25519" label="ED25519 算法" default>
+
+```shell
+ssh-keygen -t ed25519 -C "注释内容"
+```
+  </TabItem>
+  <TabItem value="RSA" label="RSA 算法">
+
+```shell
+ssh-keygen -t rsa -C "注释内容"
+```
+  </TabItem>
+</Tabs>
+
+
+:::danger 警告
+密钥用于鉴权，请谨慎保管。公钥文件以 .pub 扩展名结尾，可以公开给其他人，而没有 .pub 扩展名的私钥文件不要泄露给任何人！
+:::
+
+```shell {1}
+ssh-keygen -t ed25519 -C "注释内容"
+
+Generating public/private ed25519 key pair.
+# 密钥默认生成路径
+Enter file in which to save the key (/Users/pan/.ssh/id_ed25519):  
+# 密钥口令，不设置可以直接回车设置为空
+Enter passphrase (empty for no passphrase): 
+# 重复密钥口令，上面设置了就重复输入，没设置就直接回车
+Enter same passphrase again: 
+
+Your identification has been saved in /Users/pan/.ssh/id_ed25519
+Your public key has been saved in /Users/pan/.ssh/id_ed25519.pub
+# ...
+```
+
+
+### 3、拷贝公钥
+
+
+
+<Tabs groupId='gen-ssh-algorithm'>
+  <TabItem value="win" label="Windows（在WSL或Git Bash下）" default>
+
+```shell
+cat ~/.ssh/id_ed25519.pub | clip
+```
+  </TabItem>
+  <TabItem value="mac" label="MacOS">
+
+```shell
+tr -d '\n' < ~/.ssh/id_ed25519.pub | pbcopy
+```
+  </TabItem>
+  <TabItem value="linux" label="GNU/Linux">
+
+```shell
+xclip -sel clip < ~/.ssh/id_ed25519.pub
+```
+  </TabItem>
+</Tabs>
+
+
+## 多个密钥管理
+
+当本地存在多个密钥，如果不设置认证规则，本机将随机选择一个密钥用于认证，可能造成认证失败。
+
+因此，在如下场景中，需要自行定义认证密钥的路径：
+
+- 本地存在多个密钥对应不同的代码平台（GitLab，GitHub，云效等）。
+
+
+### 定义认证密钥路径规则
+
+编辑文件 `~/.ssh/config` 
+
+> Windows 平台请使用WSL（Windows10或以上）或 Git Bash
+
+```config
+# github 默认用户
+Host github.com
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/github.com/id_ed25519
+
+# github 用户 a
+Name github-user-a
+Host github.com
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/github.com/usera/id_ed25519
+
+# codeup 默认用户
+Host codeup.aliyun.com
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/codeup.aliyun.com/id_ed25519
+
+# codeup 用户 a
+Name codeup-user-a
+Host codeup.aliyun.com
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/codeup.aliyun.com/usera/id_ed25519
+```
+
+
+使用方式
+
+```shell
+# github 默认用户
+git clone git@github.com:example/repo.git
+
+# github 用户 a
+git clone git@github-user-a:example/repo.git
+
+# codeup 默认用户
+git clone git@codeup.aliyun.com:example/repo.com
+
+# codeup 用户 a
+git clone git@codeup-user-a:example/repo.com
 ```

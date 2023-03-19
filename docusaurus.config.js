@@ -4,7 +4,7 @@
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
-/** @type {import('@docusaurus/types').Config} */
+// /** @type {import("@docusaurus/types").Config} */
 const config = {
   title: 'My Doc',
   tagline: 'Dinosaurs are cool',
@@ -132,6 +132,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
+        // additionalLanguages: ['powershell', 'java', 'javadoc', 'json', 'sass', 'less', 'sql', 'nginx', 'yaml', 'yml', 'git']
       },
     }),
 };
