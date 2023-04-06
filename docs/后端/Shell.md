@@ -198,3 +198,80 @@ esac
 ## 调用函数
 name
 ```
+
+
+# java 运行脚本
+
+```shell
+#!/usr/bin/env bash
+
+#操作符 start(启动)|stop(停止)|restart(重启)|status(运行状态)
+OPTION=$1
+#项目名称 xxx.jar|xxx.war
+APP_NAME=app.jar
+#运行端口号 8080
+APP_PORT=8080
+#运行环境 dev
+APP_PROFILE=dev
+# 工作目录
+WORK_DIR=~/workdir
+
+JVM_OPTS=""
+
+usage() {
+  echo "Usage [start(启动)|stop(停止)|restart(重启)|status(运行状态) xxx.jar|xxx.war(项目名称) 8080(运行端口号) dev|prod|xxx(运行环境)]"
+  exit 1
+}
+
+_info() {
+  pid=$(ps -ef | grep "$APP_NAME" | grep "$APP_PORT" | grep java | awk 'NR==1 {print $2}')
+}
+
+_status() {
+  _info
+  if [[ -n "$pid" ]]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
+status() {
+  if _status; then
+    echo '未运行'
+  else
+    _info
+    echo "pid=$pid app_name=$APP_NAME server_port=$APP_PORT"
+  fi
+}
+
+start() {
+  if _status; then
+    nohup java -jar "$APP_NAME" --server.port="$APP_PORT" > log.log 2>&1 &
+    _info
+    echo "pid=$pid app_name=$APP_NAME server_port=$APP_PORT"
+  fi
+}
+
+stop() {
+  if ! _status; then
+    kill -9 "$pid"
+    echo "stopped pid: $pid"
+  else 
+    echo "Not running"
+  fi
+}
+
+restart() {
+  stop
+  start
+}
+
+case "$OPTION" in
+"start") start ;;
+"stop") stop ;;
+"restart") restart ;;
+"status") status ;;
+*) usage ;;
+esac
+```

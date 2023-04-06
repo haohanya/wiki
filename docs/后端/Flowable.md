@@ -663,3 +663,18 @@ org.flowable.common.engine.api.FlowableException: Error initialising eventregist
 | PWD_ | 密码 | NULL | YES | varchar | 255 |  |  |
 | PICTURE_ID_ | 头像ID | NULL | YES | varchar | 64 | ACT_GE_BYTEARRAY |  |
 
+
+----------------------------
+
+## Flowable 安装
+
+```kotlin
+implementation("org.flowable:flowable-spring-boot-starter:6.6.0")
+```
+
+## Api
+
+### ProcessEngine
+
+此 Api 在 Flowable 中是线程安全的
+
