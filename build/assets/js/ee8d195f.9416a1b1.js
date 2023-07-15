@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkdoc=self.webpackChunkdoc||[]).push([[3996],{5802:e=>{e.exports=JSON.parse('{"title":"\u540e\u7aef","slug":"/category/\u540e\u7aef","permalink":"/docs/category/\u540e\u7aef","navigation":{"previous":{"title":"Tutorial Intro","permalink":"/docs/intro"},"next":{"title":"Caddy","permalink":"/docs/\u540e\u7aef/Caddy"}}}')}}]);

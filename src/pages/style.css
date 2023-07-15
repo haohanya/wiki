@@ -1,0 +1,44 @@
+
+.buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/*---*/
+.home .header {
+    position: relative;
+    background-color: #fff;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.home .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.home .header-info {
+    flex: 1;
+}
+
+.home .header-image {
+    flex: 1;
+}
+
+.home .header-image img {
+    width: 100%;
+}
+
+.home .title {
+    color: #1d2129;
+}
+
+.home .subtitle,.home  .description {
+    color: #656270;
+}
