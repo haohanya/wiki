@@ -68,7 +68,7 @@ private int capacity;
 
 **Buffer 类相关方法**
 
-```java
+```java showLineNumbers
 public abstract class Buffer {
     // JKD1.4
     public final int capacity() // 返回此缓冲区的容量
