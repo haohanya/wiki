@@ -14,11 +14,11 @@ const config = {
   url: 'https://doc.mvvm.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/wiki',
+  baseUrl: '/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'nanxu', // Usually your GitHub org/user name.
+  organizationName: 'pannanxu', // Usually your GitHub org/user name.
   projectName: 'wiki', // Usually your repo name.
 
   onBrokenLinks: 'throw',
